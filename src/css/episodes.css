@@ -1,0 +1,45 @@
+div.nbi {
+    background-color: var(--sakura-layer-surface);
+    padding: var(--gap);
+    border-radius: var(--gap);
+
+    & form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+    }
+
+    & h1 {
+        display: flex;
+        margin: 0;
+        & input {
+            font-size: xx-large;
+            font-weight: bold;
+        }
+    }
+
+    & input, & select {
+        border-radius: var(--gap);
+        width: 100%;
+        padding: var(--gap);
+    }
+
+    & select {
+        height: 38px;
+        background-color: var(--sakura-hl-med);
+    }
+
+    & div.selector {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+        background-color: var(--sakura-layer-overlay);
+        border-radius: var(--gap);
+        padding: var(--gap);
+        & > div {
+            display: flex;
+            flex-direction: row;
+            gap: var(--gap);
+        }
+    }
+}

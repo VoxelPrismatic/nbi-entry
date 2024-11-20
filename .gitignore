@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+*.directory
 
 # Test binary, built with `go test -c`
 *.test
@@ -19,3 +20,10 @@
 
 # Go workspace file
 go.work
+
+# Any databases that contain private data
+*.db
+
+# Templ nonsense
+*_templ.go
+*_templ.txt
