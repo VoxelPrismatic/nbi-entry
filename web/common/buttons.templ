@@ -8,15 +8,21 @@ templ Buttons(user User, page EditBtn) {
                     @Button("dazzle", page.Icon, page.Color, page.Class, page.Title)
                 </a>
             }
-            <a href="/user">
-                if user.Email == "" {
-                    @Button("dazzle", "user", "iris", "login", "Log in")
-                } else if user.Admin {
-                    @Button("dazzle", "crown", "gold", "login", "Admin")
-                } else {
-                    @Button("dazzle", "message-circle-pencil", "tree", "login", "User")
-                }
-            </a>
+            if user.Email != "" && user.Email == page.Href {
+                <a href="/user/login">
+                    @Button("dazzle", "diamond-turn-right", "rose", "login", "Log out")
+                </a>
+            } else {
+                <a href="/user">
+                    if user.Email == "" {
+                        @Button("dazzle", "user", "iris", "login", "Log in")
+                    } else if user.Admin {
+                        @Button("dazzle", "crown", "gold", "login", "Admin")
+                    } else {
+                        @Button("dazzle", "user", "tree", "login", "User")
+                    }
+                </a>
+            }
         </div>
         <div>
             <a href="/">

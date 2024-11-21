@@ -1,0 +1,176 @@
+package notif
+
+import (
+    "fmt"
+    "nbientry/web/common"
+)
+
+templ (s Stage) RenderRow_View() {
+    <tr id={ fmt.Sprintf("stage-%d", s.Id) }>
+        <td class="btns">
+            <div class="flex-col">
+                <div class="flex-row">
+                    <button hx-put={ fmt.Sprintf("/htmx/admin-stage/%d/dec", s.Id) }
+                        hx-target="#stage-table"
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action undo"
+                        title="Move Up"
+                    >
+                        @common.SvgIcon("dazzle", "caret-up")
+                    </button>
+                    <button hx-patch={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
+                        hx-target={ fmt.Sprintf("#stage-%d", s.Id) }
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action edit"
+                        title="Edit Stage"
+                    >
+                        @common.SvgIcon("dazzle", "pencil")
+                    </button>
+                </div>
+                <div class="flex-row">
+                    <button hx-put={ fmt.Sprintf("/htmx/admin-stage/%d/inc", s.Id) }
+                        hx-target="#stage-table"
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action undo"
+                        title="Move Down"
+                    >
+                        @common.SvgIcon("dazzle", "caret-down")
+                    </button>
+                    <button hx-put={ fmt.Sprintf("/htmx/admin-stage/%d/new", s.Id) }
+                        hx-target="#stage-table"
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action new"
+                        title="Make new stage"
+                    >
+                        @common.SvgIcon("dazzle", "plus")
+                    </button>
+                </div>
+            </div>
+        </td>
+        <td class="name">
+            { s.Name }
+        </td>
+        for _, bu := range AllBusinessUnits() {
+            @s.RenderBusinessUnit(bu)
+        }
+    </tr>
+}
+
+templ (s Stage) RenderRow_Edit() {
+    <tr id={ fmt.Sprintf("stage-%d", s.Id) }>
+        <td class="btns">
+            <div class="flex-col">
+                <div class="flex-row">
+                    <button hx-delete={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
+                        hx-target={ fmt.Sprintf("#stage-%d", s.Id) }
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action delete"
+                        title="Delete Stage"
+                        hx-confirm="Are you sure you want to delete this stage?"
+                    >
+                        @common.SvgIcon("dazzle", "trash")
+                    </button>
+                    <button hx-get={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
+                        hx-target={ fmt.Sprintf("#stage-%d", s.Id) }
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action undo"
+                        title="Discard Changes"
+                    >
+                        @common.SvgIcon("dazzle", "trash-undo")
+                    </button>
+                </div>
+                <div class="flex-row">
+                    <button hx-post={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
+                        hx-target={ fmt.Sprintf("#stage-%d", s.Id) }
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action save"
+                        title="Save Stage"
+                        style="width: 100%"
+                        hx-include={ fmt.Sprintf("#stage-%d-name", s.Id) }
+                    >
+                        @common.SvgIcon("dazzle", "floppy-disk")
+                    </button>
+                </div>
+            </div>
+        </td>
+        <td class="name">
+            <input type="text" name="name" value={ s.Name } placeholder="Stage Name" id={ fmt.Sprintf("stage-%d-name", s.Id) }/>
+        </td>
+        for _, bu := range AllBusinessUnits() {
+            @s.RenderBusinessUnit(bu)
+        }
+    </tr>
+}
+
+templ (s Stage) RenderBusinessUnit(bu BusinessUnit) {
+    <td id={ fmt.Sprintf("stage-%d-%d", s.Id, bu.Id) }>
+        for _, u := range GetNotifications(s, bu) {
+            <div class="stage-chip" id={ fmt.Sprintf("stage-%d-%d-%d", s.Id, bu.Id, u.Id) }>
+                @u.RenderChip()
+                <button hx-delete={ fmt.Sprintf("/htmx/admin-notif/%d/%d/%d", s.Id, bu.Id, u.Id) }
+                    hx-target={ fmt.Sprintf("#stage-%d-%d-%d", s.Id, bu.Id, u.Id) }
+                    hx-trigger="click"
+                    hx-swap="outerHTML"
+                    hx-confirm="Are you sure you want to delete this notification?"
+                    class="action delete"
+                    title="Delete Notification"
+                >
+                    @common.SvgIcon("dazzle", "trash")
+                </button>
+            </div>
+        }
+        <div class="stage-chip new">
+            <select hx-post={ fmt.Sprintf("/htmx/admin-notif/%d/%d", s.Id, bu.Id) }
+                hx-target={ fmt.Sprintf("#stage-%d-%d", s.Id, bu.Id) }
+                hx-swap="outerHTML"
+                name="user"
+            >
+                for _, u := range (Notification{ BusinessUnitId: bu.Id, StageId: s.Id }).NegateUsers() {
+                    <option value={ fmt.Sprintf("%d", u.Id) }>{ u.FullName }</option>
+                }
+            </select>
+        </div>
+    </td>
+}
+
+
+templ (s Stage) RenderBtns(editing bool) {
+    if editing {
+        <button hx-delete={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
+            hx-target="#stage-table"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            title="Delete Stage"
+            hx-confirm="Are you sure you want to delete this stage?"
+            class="action delete"
+        >
+            @common.SvgIcon("dazzle", "trash")
+        </button>
+        <button hx-get={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
+            hx-target="#stage-table"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            class="action undo"
+            title="Discard Changes"
+        >
+            @common.SvgIcon("dazzle", "trash-undo")
+        </button>
+        <button hx-post={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
+            hx-target="#stage-table"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            class="action save"
+            title="Save Stage"
+        >
+            @common.SvgIcon("dazzle", "floppy-disk")
+        </button>
+    } else {
+    }
+}

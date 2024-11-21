@@ -72,5 +72,5 @@ func Account_POST(w http.ResponseWriter, r *http.Request, user common.User, path
 	}
 
 	web.Save(user)
-	fail.Render(w, r, user.RenderUser_Edit())
+	fail.Render(w, r, user.RenderUser_View())
 }

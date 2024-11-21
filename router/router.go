@@ -29,7 +29,7 @@ func Router(w http.ResponseWriter, r *http.Request) {
 		UserRouter(w, r, user, path[1:])
 
 	case "admin":
-		// AdminRouter(w, r, user, path[1:])
+		AdminRouter(w, r, user, path[1:])
 
 	default:
 		w.Header().Set("X-Redirect-Reason", "404: /"+path[0])

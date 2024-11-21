@@ -11,6 +11,13 @@ div.account {
         align-self: center;
     }
 
+    & div.name:has(> h1) {
+        height: unset !important;
+        & h1 {
+            margin: 0;
+        }
+    }
+
     &, & > form {
         display: flex;
         flex-direction: row;
@@ -22,9 +29,10 @@ div.account {
         height: 100%;
         & div.img-upload {
             height: 100%;
-            & img {
-                height: 100%;
-            }
+        }
+        & img {
+            height: 100%;
+            border-radius: var(--gap);
         }
     }
 
@@ -47,5 +55,23 @@ div.account {
             gap: var(--gap);
             height: 38px;
         }
+    }
+
+    & div.badge + div {
+        height: min-content;
+        align-self: center;
+    }
+}
+
+div.badge {
+    padding: var(--gap);
+    background-color: var(--sakura-hl-high);
+    border-radius: var(--gap);
+    & svg {
+        width: 100%;
+        height: 100%;
+    }
+    & path {
+        stroke: var(--sakura-layer-inv);
     }
 }

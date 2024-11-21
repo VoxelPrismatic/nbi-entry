@@ -86,3 +86,10 @@ templ (u User) RenderPassword_Edit(reason string) {
         <input type="password" name="password" value="" class="fail" title={ reason } placeholder={ reason }/>
     }
 }
+
+templ (u User) RenderChip() {
+    <a href={ templ.SafeURL(fmt.Sprintf("/user/view/%d", u.Id)) } class="user-chip">
+        <img src={ u.Image } title={ u.FullName }/>
+        <span>{ u.FullName }</span>
+    </a>
+}

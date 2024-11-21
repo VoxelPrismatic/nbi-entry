@@ -22,6 +22,6 @@ templ UserPage(user common.User, target common.User) {
                 @target.RenderUser_View()
             }
         </div>
-        @common.Buttons(user, common.EditBtn{})
+        @common.Buttons(user, common.EditBtn{ Href: target.Email })
     </body>
 }
