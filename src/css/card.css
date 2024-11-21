@@ -16,6 +16,12 @@ div.chip {
     &:hover {
         & a { color: var(--sakura-text-norm); }
         background-color: var(--sakura-layer-surface);
+        & div.img.svg {
+            background-color: var(--stroke);
+            & path {
+                stroke: var(--bg);
+            }
+        }
     }
 
     & a {
@@ -28,31 +34,31 @@ div.chip {
 
     & h1 {
         margin: 0;
-    }
-
-    & div.title {
         height: min-content;
         align-self: center;
     }
 
-    & div.svg-file {
+    & div.img.svg {
+        --bg: var(--sakura-layer-inv);
+        --stroke: var(--sakura-layer-base);
         width: 64px;
         padding: var(--gap);
         border-radius: var(--gap);
+        background-color: var(--bg);
 
-        &.tree { background-color: var(--sakura-paint-tree); }
-        &.pine { background-color: var(--sakura-paint-pine); }
-        &.iris { background-color: var(--sakura-paint-iris); }
-        &.gold { background-color: var(--sakura-paint-gold); }
-        &.foam { background-color: var(--sakura-paint-foam); }
-        &.rose { background-color: var(--sakura-paint-rose); }
-        &.love { background-color: var(--sakura-paint-love); }
+        &.tree { --bg: var(--sakura-paint-tree); }
+        &.pine { --bg: var(--sakura-paint-pine); }
+        &.iris { --bg: var(--sakura-paint-iris); }
+        &.gold { --bg: var(--sakura-paint-gold); }
+        &.foam { --bg: var(--sakura-paint-foam); }
+        &.rose { --bg: var(--sakura-paint-rose); }
+        &.love { --bg: var(--sakura-paint-love); }
 
         & svg {
             width: 100%;
             height: min-content;
             & path {
-                stroke: var(--sakura-layer-base);
+                stroke: var(--stroke);
             }
         }
     }

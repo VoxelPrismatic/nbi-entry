@@ -1,0 +1,40 @@
+package pages
+
+import (
+    "nbientry/web/common"
+)
+
+templ Home(user common.User) {
+    @common.Head("NBI Entry", "NBI Entry")
+    <body>
+        <div class="home masonry">
+            <div class="chip post">
+                <a href="/nbi/new">
+                    <div class="img svg tree">
+                        @common.SvgIcon("dazzle", "file-plus")
+                    </div>
+                    <h1>New NBI</h1>
+                </a>
+            </div>
+            <div class="chip post">
+                <a href="/nbi/view">
+                    <div class="img svg iris">
+                        @common.SvgIcon("dazzle", "list")
+                    </div>
+                    <h1>View NBIs</h1>
+                </a>
+            </div>
+            if user.Admin {
+                <div class="chip post">
+                    <a href="/admin/notif">
+                        <div class="img svg rose">
+                            @common.SvgIcon("dazzle", "bell")
+                        </div>
+                        <h1>Stages & Notifications</h1>
+                    </a>
+                </div>
+            }
+        </div>
+        @common.Buttons(user, common.EditBtn{})
+    </body>
+}
