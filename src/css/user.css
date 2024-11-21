@@ -1,0 +1,51 @@
+div.user-details {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+div.account {
+    & {
+        height: min-content;
+        align-self: center;
+    }
+
+    &, & > form {
+        display: flex;
+        flex-direction: row;
+        gap: var(--gap);
+        height: 512px;
+    }
+
+    & div.img {
+        height: 100%;
+        & div.img-upload {
+            height: 100%;
+            & img {
+                height: 100%;
+            }
+        }
+    }
+
+    & div.info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+        align-self: center;
+
+        & input {
+            border-radius: var(--gap);
+            width: calc(100% - 4px - var(--gap) * 2);
+            min-width: 256px;
+            padding: 0 var(--gap);
+        }
+
+        & > div {
+            display: flex;
+            flex-direction: row;
+            gap: var(--gap);
+            height: 38px;
+        }
+    }
+}

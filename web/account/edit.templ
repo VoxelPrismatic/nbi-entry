@@ -1,0 +1,27 @@
+package account
+
+import (
+    "nbientry/web/common"
+)
+
+templ UserPage(user common.User, target common.User) {
+    @common.Head("NBI Entry - Account Details", "Account Details")
+
+    <style type="text/css">
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+
+    <body>
+        <div class="user-details">
+            if user.Email == target.Email || user.Admin {
+                @target.RenderUser_Edit()
+            } else {
+                @target.RenderUser_View()
+            }
+        </div>
+        @common.Buttons(user, common.EditBtn{})
+    </body>
+}

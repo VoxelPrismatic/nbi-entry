@@ -1,0 +1,88 @@
+package common
+
+import (
+    "fmt"
+)
+
+templ (u User) RenderUser_View() {
+    <div class="account" id={ fmt.Sprintf("user-%d", u.Id) }>
+        <div class="img">
+            <img src={ u.Image } />
+        </div>
+        <div class="info">
+            <div class="name">
+                <h1>{ u.FullName }</h1>
+            </div>
+            <div class="email">
+                <div class="badge">@SvgIcon("dazzle", "mail")</div>
+                <div>{ u.Email }</div>
+            </div>
+            <div class="phone">
+                <div class="badge">@SvgIcon("dazzle", "phone")</div>
+                <div>{ u.Phone }</div>
+            </div>
+        </div>
+    </div>
+}
+
+templ (u User) RenderUser_Edit() {
+    <div class="account" id={ fmt.Sprintf("user-%d", u.Id) }>
+        <form hx-post={ fmt.Sprintf("/htmx/account/%d", u.Id) } hx-swap="outerHTML">
+            <div class="img">
+                @ImgUpload(u.Image, "user", "image")
+            </div>
+            <div class="info">
+                <div class="name">
+                    <input type="text" name="name" value={ u.FullName } placeholder="Full Name"/>
+                    <button hx-get={ fmt.Sprintf("/htmx/account/%d", u.Id) }
+                        hx-target={ fmt.Sprintf("#user-%d", u.Id) }
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        class="action undo"
+                        title="Discard Changes"
+                    >
+                        @SvgIcon("dazzle", "trash-undo")
+                    </button>
+                    <button hx-delete={ fmt.Sprintf("/htmx/account/%d", u.Id) }
+                        hx-target={ fmt.Sprintf("#user-%d", u.Id) }
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        hx-confirm="Are you sure you want to delete this account?"
+                        class="action delete"
+                        title="Delete Account"
+                    >
+                        @SvgIcon("dazzle", "trash")
+                    </button>
+                    <button type="submit" class="action save" title="Save Account">
+                        @SvgIcon("dazzle", "floppy-disk")
+                    </button>
+                </div>
+                <div class="email">
+                    @u.RenderEmail_Edit("")
+                </div>
+                <div class="phone">
+                    <input type="text" name="phone" value={ u.Phone } placeholder="Phone" id="phone"/>
+                </div>
+                <div class="password">
+                    @u.RenderPassword_Edit("")
+                </div>
+            </div>
+        </form>
+    </div>
+}
+
+templ (u User) RenderEmail_Edit(reason string) {
+    if reason == "" {
+        <input type="text" name="email" value={ u.Email } placeholder="Email" id="email"/>
+    } else {
+        <input type="text" name="email" value="" class="fail" title={ reason } placeholder={ reason }/>
+    }
+}
+
+templ (u User) RenderPassword_Edit(reason string) {
+    if reason == "" {
+        <input type="password" name="password" value="" placeholder="New Password" id="password"/>
+    } else {
+        <input type="password" name="password" value="" class="fail" title={ reason } placeholder={ reason }/>
+    }
+}

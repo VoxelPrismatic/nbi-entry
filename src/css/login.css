@@ -10,4 +10,32 @@ div.login {
         flex-direction: column;
         gap: var(--gap);
     }
+    & input {
+        width: calc(100% - 4px - var(--padding) * 2);
+        min-width: 312px;
+    }
+    & button {
+        background-color: var(--sakura-paint-tree);
+        color: var(--sakura-layer-base);
+        font-weight: bold;
+        border: 2px solid var(--sakura-layer-overlay);
+        padding: var(--padding);
+        border-radius: var(--padding);
+        &[disabled] {
+            background-color: var(--sakura-paint-love);
+            &:hover {
+                background-color: var(--sakura-paint-rose);
+                cursor: not-allowed;
+            }
+        }
+        &:hover {
+            background-color: var(--sakura-paint-gold);
+            cursor: pointer;
+        }
+        & + div.error {
+            color: var(--sakura-paint-rose);
+            font-size: small;
+            font-weight: bold;
+        }
+    }
 }

@@ -27,3 +27,5 @@ go.work
 # Templ nonsense
 *_templ.go
 *_templ.txt
+src/img/upload/*
+src/attachment/*
