@@ -16,21 +16,21 @@ const (
 
 var ValidIDs = regexp.MustCompile(`^([0-9a-z\_\-]+)$`)
 
-func Auth(w http.ResponseWriter, user common.User, level int) bool {
+func Auth(w http.ResponseWriter, r *http.Request, user common.User, level int) bool {
 	if level >= VIEWER && user.Email == "" {
-		return throw_auth(w, "Not logged in")
+		return throw_auth(w, r, "Not logged in")
 	}
 
 	if level >= ADMIN && !user.Admin {
-		return throw_auth(w, "Not an admin")
+		return throw_auth(w, r, "Not an admin")
 	}
 
 	return false
 }
 
-func throw_auth(w http.ResponseWriter, reason string) bool {
+func throw_auth(w http.ResponseWriter, r *http.Request, reason string) bool {
 	w.Header().Set("X-Auth-Reason", reason)
-	http.Error(w, "Not authorized", http.StatusUnauthorized)
+	http.Redirect(w, r, "/user/login", http.StatusTemporaryRedirect)
 	return true
 }
 

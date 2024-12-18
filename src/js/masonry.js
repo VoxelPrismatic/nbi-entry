@@ -3,7 +3,7 @@ function masonry(listing) {
         return $$("div.masonry").forEach(masonry);
 
     if(!listing.dataset.width)
-        listing.dataset.width = 368;
+        listing.dataset.width = 376;
 
     const col_count = Math.max(1, Math.floor(listing.clientWidth / listing.dataset.width));
     console.log("Column Count:", col_count);

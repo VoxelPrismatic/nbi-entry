@@ -22,7 +22,7 @@ div.account {
         display: flex;
         flex-direction: row;
         gap: var(--gap);
-        height: 512px;
+        height: 256px;
     }
 
     & div.img {

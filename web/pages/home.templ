@@ -26,11 +26,19 @@ templ Home(user common.User) {
             </div>
             if user.Admin {
                 <div class="chip post">
-                    <a href="/admin/notif">
+                    <a href="/admin/stage">
                         <div class="img svg rose">
-                            @common.SvgIcon("dazzle", "bell")
+                            @common.SvgIcon("dazzle", "code-commit")
                         </div>
-                        <h1>Stages & Notifications</h1>
+                        <h1>Stages</h1>
+                    </a>
+                </div>
+                <div class="chip post">
+                    <a href="/admin/user">
+                        <div class="img svg foam">
+                            @common.SvgIcon("dazzle", "user-pen")
+                        </div>
+                        <h1>Users</h1>
                     </a>
                 </div>
             }

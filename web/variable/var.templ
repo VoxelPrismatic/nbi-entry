@@ -1,0 +1,60 @@
+package variable
+
+import (
+    "fmt"
+    "nbientry/web/common"
+)
+
+templ (v *VariableEntry) RenderVariable() {
+    switch v.GetVariable().Type {
+        case "number":
+            @v.RenderNumber()
+
+    }
+}
+
+templ (v *VariableEntry) RenderNumber() {
+    <div class="variable flex-col">
+        <div title={ v.GetVariable().Description }>
+            <label for={ fmt.Sprintf("%d-input", v.VariableId) }>
+                <h1 class="name">{ v.GetVariable().Name }</h1>
+            </label>
+        </div>
+        <div class="value">
+            <input type="number" value={ v.Value } id={ fmt.Sprintf("%d-input", v.VariableId) }/>
+        </div>
+    </div>
+
+}
+
+templ edit_var_head(v VarEntry) {
+    <div class="flex-row">
+        <div class="token">{ fmt.Sprint(v.GetVarId()) }</div>
+
+        <button hx-get={ fmt.Sprintf("/htmx/variable/%d", v.GetVarId()) }
+            hx-target={ fmt.Sprintf("#variable-%d", v.GetVarId()) }
+            hx-swap="outerHTML"
+            hx-trigger="click"
+            class="action undo"
+            title="Discard changes"
+        >
+            @common.SvgIcon("dazzle", "trash-undo")
+        </button>
+
+        <button hx-delete={ fmt.Sprintf("/htmx/variable/%d", v.GetVarId()) }
+            hx-target={ fmt.Sprintf("#variable-%d", v.GetVarId()) }
+            hx-swap="outerHTML"
+            hx-trigger="click"
+            hx-confirm="Are you sure you want to delete this variable?"
+            class="action delete"
+            title="Delete Variable"
+        >
+            @common.SvgIcon("dazzle", "trash")
+        </button>
+
+        <button type="submit" class="action save" title="Save Variable">
+            @common.SvgIcon("dazzle", "floppy-disk")
+        </button>
+    </div>
+}
+

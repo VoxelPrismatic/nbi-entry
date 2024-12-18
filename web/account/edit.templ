@@ -16,7 +16,7 @@ templ UserPage(user common.User, target common.User) {
 
     <body>
         <div class="user-details">
-            if user.Email == target.Email || user.Admin {
+            if user.Id == target.Id {
                 @target.RenderUser_Edit()
             } else {
                 @target.RenderUser_View()

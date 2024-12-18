@@ -8,18 +8,18 @@ import (
 var _ = web.Migrate(Notification{})
 
 type Notification struct {
-	BusinessUnitId int
-	StageId        int
-	UserId         int
+	AppSegId int
+	StageId  int
+	UserId   int
 }
 
 func (n Notification) Exists(u common.User) bool {
-	return web.GetFirst(Notification{UserId: u.Id, BusinessUnitId: n.BusinessUnitId, StageId: n.StageId}).UserId != 0
+	return web.GetFirst(Notification{UserId: u.Id, AppSegId: n.AppSegId, StageId: n.StageId}).UserId != 0
 }
 
 func (n Notification) Users() []common.User {
-	user_ids := []int{}
-	for _, u := range web.GetSorted(Notification{BusinessUnitId: n.BusinessUnitId, StageId: n.StageId}, "user_id ASC") {
+	user_ids := []int{0}
+	for _, u := range web.GetSorted(Notification{AppSegId: n.AppSegId, StageId: n.StageId}, "user_id ASC") {
 		user_ids = append(user_ids, u.UserId)
 	}
 
@@ -29,8 +29,8 @@ func (n Notification) Users() []common.User {
 }
 
 func (n Notification) NegateUsers() []common.User {
-	user_ids := []int{}
-	for _, u := range web.GetSorted(Notification{BusinessUnitId: n.BusinessUnitId, StageId: n.StageId}, "user_id ASC") {
+	user_ids := []int{0}
+	for _, u := range web.GetSorted(Notification{AppSegId: n.AppSegId, StageId: n.StageId}, "user_id ASC") {
 		user_ids = append(user_ids, u.UserId)
 	}
 
@@ -39,8 +39,8 @@ func (n Notification) NegateUsers() []common.User {
 	return ret
 }
 
-func (n Notification) GetBusinessUnit() BusinessUnit {
-	return web.GetFirst(BusinessUnit{Id: n.BusinessUnitId})
+func (n Notification) GetBusinessUnit() ApplicationSegment {
+	return web.GetFirst(ApplicationSegment{Id: n.AppSegId})
 }
 
 func (n Notification) GetStage() Stage {
@@ -51,6 +51,7 @@ func (n Notification) GetUser() common.User {
 	return web.GetFirst(common.User{Id: n.UserId})
 }
 
-func GetNotifications(s Stage, bu BusinessUnit) []common.User {
-	return web.GetSorted(common.User{}, "name ASC")
+func GetNotifications(s Stage, app ApplicationSegment) []common.User {
+	notif := Notification{StageId: s.Id, AppSegId: app.Id}
+	return notif.Users()
 }

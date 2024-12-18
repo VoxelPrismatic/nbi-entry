@@ -1,0 +1,17 @@
+package account
+
+import (
+    "nbientry/web/common"
+)
+
+templ UserList(user common.User) {
+    @common.Head("NBI Entry - User List", "User List")
+    <body>
+        <div class="home masonry">
+            for _, u := range common.Users() {
+                @u.RenderChip_PostView(user)
+            }
+        </div>
+        @common.Buttons(user, common.EditBtn{})
+    </body>
+}

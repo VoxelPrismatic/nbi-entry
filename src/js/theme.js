@@ -20,9 +20,9 @@ window.addEventListener("load", () => {
     const theme_media = window.matchMedia("(prefers-color-scheme: dark)");
     body.style.colorScheme = theme_media.matches ? "dark" : "light";
 
-    theme_media.onChange = (evt) => {
+    theme_media.onchange = (evt) => {
         body.style.colorScheme = evt.matches ? "light" : "dark";
-        btn.onmousedown();
+        change_btn.onmousedown();
     }
 
     change_btn.onmousedown();

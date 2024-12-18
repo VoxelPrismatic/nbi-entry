@@ -1,0 +1,13 @@
+package variable
+
+import "fmt"
+
+templ (v var_form) RenderInNbi() {
+    <div class="variable flex-col" id={ fmt.Sprintf("variable-%d", v.VariableId) }>
+        <div class="flex-row">
+            for _, c := range v.children() {
+                @c.RenderInNbi()
+            }
+        </div>
+    </div>
+}

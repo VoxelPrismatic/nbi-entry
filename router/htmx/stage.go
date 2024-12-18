@@ -4,13 +4,13 @@ import (
 	"nbientry/router/fail"
 	"nbientry/web"
 	"nbientry/web/common"
-	notif "nbientry/web/notification"
+	"nbientry/web/notif"
 	"net/http"
 	"strconv"
 )
 
 func StageRouter(w http.ResponseWriter, r *http.Request, user common.User, path []string) {
-	if fail.Auth(w, user, fail.ADMIN) {
+	if fail.Auth(w, r, user, fail.ADMIN) {
 		return
 	}
 
@@ -27,10 +27,10 @@ func StageRouter(w http.ResponseWriter, r *http.Request, user common.User, path 
 		Stage_PUT(w, r, user, path, stage)
 
 	case "PATCH":
-		fail.Render(w, r, stage.RenderRow_Edit())
+		fail.Render(w, r, stage.RenderHead_Edit())
 
 	case "GET":
-		fail.Render(w, r, stage.RenderRow_View())
+		fail.Render(w, r, stage.RenderHead_View())
 
 	case "DELETE":
 		web.Db().Delete(&stage)
@@ -40,8 +40,9 @@ func StageRouter(w http.ResponseWriter, r *http.Request, user common.User, path 
 			return
 		}
 		stage.Name = r.Form.Get("name")
+		stage.Description = r.Form.Get("description")
 		web.Save(&stage)
-		fail.Render(w, r, stage.RenderRow_View())
+		fail.Render(w, r, stage.RenderHead_View())
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -59,15 +60,14 @@ func Stage_PUT(w http.ResponseWriter, r *http.Request, user common.User, path []
 	switch path[1] {
 	case "inc":
 		stage.Increment()
-		fail.Render(w, r, notif.RenderTable())
+		fail.Render(w, r, notif.RenderStageTable())
 
 	case "dec":
 		stage.Decrement()
-		fail.Render(w, r, notif.RenderTable())
+		fail.Render(w, r, notif.RenderStageTable())
 
 	case "new":
 		_ = stage.New()
-		fail.Render(w, r, notif.RenderTable())
-
+		fail.Render(w, r, notif.RenderStageTable())
 	}
 }

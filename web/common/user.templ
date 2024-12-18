@@ -89,7 +89,69 @@ templ (u User) RenderPassword_Edit(reason string) {
 
 templ (u User) RenderChip() {
     <a href={ templ.SafeURL(fmt.Sprintf("/user/view/%d", u.Id)) } class="user-chip">
-        <img src={ u.Image } title={ u.FullName }/>
-        <span>{ u.FullName }</span>
+        <div class="flex-row">
+            <div class="img">
+                <img src={ u.Image } title={ u.FullName }/>
+            </div>
+            <div class="details flex-col">
+                <h3>{ u.FullName }</h3>
+                <h6>{ u.Email }</h6>
+            </div>
+        </div>
     </a>
+}
+
+templ (u User) RenderChip_PostView(other User) {
+    <div class="post flex-row user-chip" id={ fmt.Sprintf("user-%d", u.Id) }>
+        <div class="link">
+            @u.RenderChip()
+        </div>
+        if other.Admin {
+            <div class="flex-col buttons">
+                if u.Id == other.Id {
+                    <button class="action undo" title="You can't demote yourself" disabled>
+                        @SvgIcon("dazzle", "user-minus")
+                    </button>
+                } else if u.Admin {
+                    <button hx-patch={ fmt.Sprintf("/htmx/admin-account/%d", u.Id) }
+                        hx-swap="outerHTML"
+                        hx-trigger="click"
+                        hx-target={ fmt.Sprintf("#user-%d", u.Id) }
+                        hx-confirm={ fmt.Sprintf("Are you sure you want to deomote %s?", u.FullName) }
+                        class="action undo"
+                        title="Demote"
+                    >
+                        @SvgIcon("dazzle", "user-minus")
+                    </button>
+                } else {
+                    <button hx-patch={ fmt.Sprintf("/htmx/admin-account/%d", u.Id) }
+                        hx-swap="outerHTML"
+                        hx-trigger="click"
+                        hx-target={ fmt.Sprintf("#user-%d", u.Id) }
+                        hx-confirm={ fmt.Sprintf("Are you sure you want to promote %s?", u.FullName) }
+                        class="action edit"
+                        title="Promote"
+                    >
+                        @SvgIcon("dazzle", "user-shield")
+                    </button>
+                }
+                if !u.IsReset() {
+                    <button hx-delete={ fmt.Sprintf("/htmx/admin-account/%d", u.Id) }
+                        hx-swap="outerHTML"
+                        hx-trigger="click"
+                        hx-target={ fmt.Sprintf("#user-%d", u.Id) }
+                        hx-confirm="Are you sure you want to reset this user's password?"
+                        class="action delete"
+                        title="Reset Password"
+                    >
+                        @SvgIcon("dazzle", "user-refresh")
+                    </button>
+                } else {
+                    <button class="action delete" title="Password already reset" disabled>
+                        @SvgIcon("dazzle", "user-refresh")
+                    </button>
+                }
+            </div>
+        }
+    </div>
 }

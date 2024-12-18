@@ -158,6 +158,14 @@ func (u *User) ValidatePassword(pass string) error {
 	return nil
 }
 
+func (u *User) IsReset() bool {
+	pass := u.Password
+	err := u.ValidatePassword("password")
+	u.Password = pass
+
+	return err == nil
+}
+
 func (u User) Cookie() *http.Cookie {
 	return &http.Cookie{
 		Name:  "jwt",
@@ -182,4 +190,8 @@ func CookieAuth(w http.ResponseWriter, r *http.Request) User {
 	}
 
 	return user
+}
+
+func Users() []User {
+	return web.GetSorted(User{}, "`full_name` ASC")
 }

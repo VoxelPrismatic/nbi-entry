@@ -10,7 +10,7 @@ import (
 
 func AccountRouter(w http.ResponseWriter, r *http.Request, user common.User, path []string) {
 	if len(path) != 1 {
-		http.Error(w, "Bad request\nformat: /htmx/account/ID", http.StatusBadRequest)
+		http.Error(w, "Bad request\nformat: /htmx/account/:ID", http.StatusBadRequest)
 		return
 	}
 

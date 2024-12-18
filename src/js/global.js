@@ -43,3 +43,10 @@ async function uploadImage(elem) {
     button.innerHTML = SVG.upload;
 }
 
+function colorParent(elem) {
+    const parent = _(elem.form.parentElement);
+    for(var input of parent.$$("input[name=color]"))
+        parent.classList.remove(input.value);
+
+    parent.classList.add(elem.value);
+}

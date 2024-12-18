@@ -27,7 +27,7 @@ func HtmxRouter(w http.ResponseWriter, r *http.Request, user common.User, path [
 }
 
 func HtmxRouter_Authed(w http.ResponseWriter, r *http.Request, user common.User, path []string) {
-	if fail.Auth(w, user, fail.VIEWER) {
+	if fail.Auth(w, r, user, fail.VIEWER) {
 		return
 	}
 
@@ -35,8 +35,14 @@ func HtmxRouter_Authed(w http.ResponseWriter, r *http.Request, user common.User,
 	case "account":
 		htmx.AccountRouter(w, r, user, path[1:])
 
+	case "admin-account":
+		htmx.AdminAccountRouter(w, r, user, path[1:])
+
 	case "admin-stage":
 		htmx.StageRouter(w, r, user, path[1:])
+
+	case "admin-notif":
+		htmx.NotifRouter(w, r, user, path[1:])
 
 	case "upload-img":
 		UploadImage(w, r, user, path[1:])
@@ -46,14 +52,14 @@ func HtmxRouter_Authed(w http.ResponseWriter, r *http.Request, user common.User,
 
 	default:
 		w.Header().Set("X-Redirect-Reason", "404: /htmx/"+path[0])
-		http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+		http.Error(w, "Not found", http.StatusNotFound)
 	}
 }
 
 // func read_form(
 
 func UploadImage(w http.ResponseWriter, r *http.Request, user common.User, path []string) {
-	if fail.Auth(w, user, fail.VIEWER) {
+	if fail.Auth(w, r, user, fail.VIEWER) {
 		return
 	}
 
@@ -106,7 +112,7 @@ func UploadImage(w http.ResponseWriter, r *http.Request, user common.User, path 
 }
 
 func UploadSVG(w http.ResponseWriter, r *http.Request, user common.User, path []string) {
-	if fail.Auth(w, user, fail.ADMIN) {
+	if fail.Auth(w, r, user, fail.ADMIN) {
 		return
 	}
 

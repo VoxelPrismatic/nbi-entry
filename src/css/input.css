@@ -63,3 +63,14 @@ input.fail {
         min-width: 48px;
     }
 }
+
+input[name="color"] {
+    &[value="rose"] { accent-color: var(--sakura-paint-rose); }
+    &[value="pine"] { accent-color: var(--sakura-paint-pine); }
+    &[value="foam"] { accent-color: var(--sakura-paint-foam); }
+    &[value="iris"] { accent-color: var(--sakura-paint-iris); }
+    &[value="tree"] { accent-color: var(--sakura-paint-tree); }
+    &[value="gold"] { accent-color: var(--sakura-paint-gold); }
+    &[value="love"] { accent-color: var(--sakura-paint-love); }
+}
+

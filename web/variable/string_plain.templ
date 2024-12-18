@@ -1,0 +1,19 @@
+package variable
+
+import "fmt"
+
+templ (v var_str_plain) RenderInNbi() {
+    <div class="variable flex-col" id={ fmt.Sprintf("variable-%d", v.VariableId) }>
+        <div class="flex-row">
+            <label for={ fmt.Sprintf("%d-input", v.VariableId) }>
+                <h3 class="name">{ v.GetVariable().Name }</h3>
+            </label>
+        </div>
+        <div class="flex-row" title={ v.GetVariable().Description }>
+            <input type="text" value={ v.Value } id={ fmt.Sprintf("%d-input", v.VariableId) }/>
+            if v.GetVariable().Suffix != "" {
+                <span class="suffix">{ v.GetVariable().Suffix }</span>
+            }
+        </div>
+    </div>
+}
