@@ -66,5 +66,5 @@ func StageRouter(w http.ResponseWriter, r *http.Request, user common.User, path 
 		return
 	}
 
-	fail.Render(w, r, stage.RenderPage())
+	fail.Render(w, r, stage.RenderPage(user))
 }

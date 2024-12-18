@@ -57,14 +57,14 @@ templ RenderStageTable() {
     </div>
 }
 
-templ (s Stage) RenderPage() {
+templ (s Stage) RenderPage(user common.User) {
     @common.Head(s.Name, "Stage Details")
     <body>
         <div class="flex-col">
             @s.RenderHead_View()
             @s.RenderNotifs()
         </div>
-        @common.Buttons(common.User{}, common.EditBtn{})
+        @common.Buttons(user, common.EditBtn{})
     </body>
 }
 
