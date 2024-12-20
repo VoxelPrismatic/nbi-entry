@@ -56,19 +56,19 @@ func notif_parse_url(path []string, has_stage bool, has_app_seg bool) (notif.Sta
 	switch flags {
 	case 0:
 		if len(path) != 0 {
-			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/admin-notif/")
+			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/notif/")
 		}
 	case 1:
 		if len(path) != 1 {
-			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/admin-notif/:StageID")
+			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/notif/:StageID")
 		}
 	case 2:
 		if len(path) != 1 {
-			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/admin-notif/:AppSegID")
+			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/notif/:AppSegID")
 		}
 	case 3:
 		if len(path) != 2 {
-			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/admin-notif/:AppSegID/:StageID")
+			return stage, app_seg, fmt.Errorf("Bad request\nformat: /htmx/notif/:AppSegID/:StageID")
 		}
 	}
 
@@ -210,5 +210,8 @@ func Notif_DELETE(w http.ResponseWriter, r *http.Request, user common.User, path
 		return
 	}
 
+	for _, n := range web.GetSorted(notif.Notification{AppSegId: app_seg.Id}, "stage_id ASC") {
+		web.Db().Model(&notif.Notification{}).Where(&n).Delete(&n)
+	}
 	web.Db().Delete(&app_seg)
 }

@@ -56,3 +56,19 @@ span.error, p.error {
     color: var(--sakura-paint-rose);
     font-weight: bold;
 }
+
+pre, code {
+    font-size: smaller;
+    background-color: var(--sakura-hl-med);
+    color: var(--sakura-layer-inv);
+    font-family: "Ubuntu Mono";
+    border: 2px solid var(--sakura-hl-high);
+}
+code {
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+pre {
+    padding: var(--pad);
+    border-radius: var(--pad);
+}

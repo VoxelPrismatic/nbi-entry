@@ -10,8 +10,10 @@ import (
 var _ = web.Migrate(&Variable{})
 var _ = web.Migrate(&VariableEntry{})
 
+var expandable = []string{"form", "table", "reason", "paragraph"}
+
 type Variable struct {
-	VariableId  int `gorm:"primaryKey"`
+	Id          int `gorm:"primaryKey"`
 	ParentId    int
 	Name        string
 	Type        string
@@ -20,23 +22,50 @@ type Variable struct {
 }
 
 type VariableEntry struct {
-	NbiId      int      `gorm:"primaryKey;auto_increment=false"`
-	VariableId int      `gorm:"primaryKey;auto_increment=false"`
-	Index      int      `gorm:"primaryKey;auto_increment=false"`
-	Variable   Variable `gorm:"foreignKey:VariableId"`
-	Value      string
+	NbiId int      `gorm:"primaryKey;auto_increment=false"`
+	Id    int      `gorm:"primaryKey;auto_increment=false"`
+	Index int      `gorm:"primaryKey;auto_increment=false"`
+	T     Variable `gorm:"foreignKey:Id"`
+	Value string
 }
 
 func (v Variable) GetParent() Variable {
-	return web.GetFirst(Variable{VariableId: v.ParentId})
+	return web.GetFirst(Variable{Id: v.ParentId})
 }
 
 func (v Variable) GetChildren() []Variable {
-	return web.GetSorted(Variable{ParentId: v.VariableId}, "VariableId ASC")
+	return web.GetSorted(Variable{ParentId: v.Id}, "Id ASC")
 }
 
 func (v Variable) GetEntry(id int) VariableEntry {
-	return web.GetFirst(VariableEntry{NbiId: id, VariableId: v.VariableId})
+	ret := web.GetFirst(VariableEntry{NbiId: id, Id: v.Id})
+	if ret.Id == 0 {
+		ret = v.New()
+	}
+	return ret
+}
+
+func (v *Variable) New() VariableEntry {
+	if v.Id == 0 {
+		v.Id = -1
+	}
+
+	return VariableEntry{
+		Id: v.Id,
+		T:  *v,
+	}
+}
+
+func (v *Variable) Delete() {
+	for _, c := range v.GetChildren() {
+		c.Delete()
+	}
+
+	for _, e := range web.GetSorted(VariableEntry{Id: v.Id}, "nbi_id ASC") {
+		web.Db().Delete(e)
+	}
+
+	web.Db().Delete(v)
 }
 
 type VarEntry interface {
@@ -44,12 +73,13 @@ type VarEntry interface {
 	GetNbiId() int
 	GetIndex() int
 	SetIndex(idx int)
-	GetVariable() Variable
+	Type() Variable
 	Get() string
 	Set(string) error
+	Reset()
 	RenderInNbi() templ.Component
-	// RenderInViewer() templ.Component
-	// RenderInEditor() templ.Component
+	RenderInViewer() templ.Component
+	RenderInEditor() templ.Component
 	ToSqlEntry() VariableEntry
 	ToTypedEntry() (VarEntry, error)
 }
@@ -70,15 +100,19 @@ func (v *VariableEntry) SetIndex(idx int) {
 	v.Index = idx
 }
 
-func (v *VariableEntry) GetVariable() Variable {
-	if v.Variable.VariableId == 0 {
-		v.Variable = web.GetFirst(Variable{VariableId: v.VariableId})
+func (v *VariableEntry) Type() Variable {
+	if v.T.Id == 0 {
+		v.T = web.GetFirst(Variable{Id: v.Id})
 	}
-	return v.Variable
+	return v.T
 }
 
 func (v VariableEntry) Get() string {
 	return v.Value
+}
+
+func (v *VariableEntry) Reset() {
+	v.Value = ""
 }
 
 func (v *VariableEntry) Set(value string) error {
@@ -100,17 +134,27 @@ func (v VariableEntry) ToSqlEntry() VariableEntry {
 
 func (v VariableEntry) ToTypedEntry() (VarEntry, error) {
 	var ret VarEntry
-	switch v.GetVariable().Type {
-	case "string_plain":
-		ret = &var_str_plain{NbiId: v.NbiId, VariableId: v.VariableId}
-	case "string_autofill":
-		ret = &var_str_autofill{NbiId: v.NbiId, VariableId: v.VariableId}
+	var err error
+
+	switch v.Type().Type {
+	case "text-plain":
+		ret = &var_str_plain{Real: v, T: v.T}
+	case "text-suggest":
+		ret = &var_str_suggest{Real: v, T: v.T}
 	case "form":
-		ret = &var_form{NbiId: v.NbiId, VariableId: v.VariableId}
+		ret = &var_form{Real: v, T: v.T}
+	case "num":
+		ret = &var_num{Real: v, T: v.T}
 	default:
-		return nil, fmt.Errorf("unknown variable type: %s", v.GetVariable().Type)
+		fmt.Printf("\x1b[91;1munknown variable type:\x1b[0m %s\n", v.Type().Type)
+		return &v, fmt.Errorf("unknown variable type")
 	}
-	err := ret.Set(v.Value)
+
+	if v.Value == "" {
+		ret.Reset()
+	} else {
+		err = ret.Set(v.Value)
+	}
 	return ret, err
 }
 
@@ -120,4 +164,20 @@ func (v VariableEntry) RenderInNbi() templ.Component {
 		return nil
 	}
 	return entry.RenderInNbi()
+}
+
+func (v VariableEntry) RenderInEditor() templ.Component {
+	entry, err := v.ToTypedEntry()
+	if err != nil {
+		return nil
+	}
+	return entry.RenderInEditor()
+}
+
+func (v VariableEntry) RenderInViewer() templ.Component {
+	entry, err := v.ToTypedEntry()
+	if err != nil {
+		return nil
+	}
+	return entry.RenderInViewer()
 }

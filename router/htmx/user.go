@@ -8,13 +8,13 @@ import (
 	"strconv"
 )
 
-func AdminAccountRouter(w http.ResponseWriter, r *http.Request, user common.User, path []string) {
+func UserRouter(w http.ResponseWriter, r *http.Request, user common.User, path []string) {
 	if fail.Auth(w, r, user, fail.ADMIN) {
 		return
 	}
 
 	if len(path) != 1 {
-		http.Error(w, "Bad request\nformat: /htmx/admin-account/:UserID", http.StatusBadRequest)
+		http.Error(w, "Bad request\nformat: /htmx/user/:UserID", http.StatusBadRequest)
 		return
 	}
 
@@ -34,8 +34,8 @@ func AdminAccountRouter(w http.ResponseWriter, r *http.Request, user common.User
 		fail.Render(w, r, u.RenderChip_PostView(user))
 
 	case "PATCH":
+		web.Db().Model(&common.User{Id: u.Id}).Update("admin", !u.Admin)
 		u.Admin = !u.Admin
-		web.Save(&u)
 		fail.Render(w, r, u.RenderChip_PostView(user))
 
 	case "DELETE":

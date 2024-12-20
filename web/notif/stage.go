@@ -16,7 +16,11 @@ type Stage struct {
 }
 
 func AllStages() []Stage {
-	return web.GetSorted(Stage{}, "`index` ASC")
+	stages := web.GetSorted(Stage{}, "`index` ASC")
+	if len(stages) == 0 {
+		stages = append(stages, (Stage{Index: 0}).New())
+	}
+	return stages
 }
 
 func (s Stage) Top() bool {
@@ -70,16 +74,37 @@ func (s Stage) New() Stage {
 func (s Stage) Variable() variable.Variable {
 	if s.VariableId == 0 {
 		v := variable.Variable{
-			ParentId:    0,
-			Name:        s.Name,
-			Type:        "form",
-			Description: "Form for Stage: " + s.Name,
-			Suffix:      "",
+			Type: "form",
 		}
 
 		web.Save(&v)
-		s.VariableId = v.VariableId
+
+		s.VariableId = v.Id
+		web.Save(&s)
 	}
 
-	return web.GetFirst(variable.Variable{VariableId: s.VariableId})
+	v := web.GetFirst(variable.Variable{Id: s.VariableId})
+	if v.Name == "" {
+		v.Name = s.Name
+		v.Description = "Form for Stage: " + s.Name
+		web.Save(&v)
+	}
+
+	if v.Type != "form" {
+		v.Type = "form"
+		web.Save(&v)
+	}
+
+	if v.ParentId != 0 {
+		v.ParentId = 0
+		web.Save(&v)
+	}
+
+	return v
+}
+
+func (s Stage) Delete() {
+	v := s.Variable()
+	v.Delete()
+	web.Db().Delete(s)
 }

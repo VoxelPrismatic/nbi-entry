@@ -113,7 +113,7 @@ templ (u User) RenderChip_PostView(other User) {
                         @SvgIcon("dazzle", "user-minus")
                     </button>
                 } else if u.Admin {
-                    <button hx-patch={ fmt.Sprintf("/htmx/admin-account/%d", u.Id) }
+                    <button hx-patch={ fmt.Sprintf("/htmx/user/%d", u.Id) }
                         hx-swap="outerHTML"
                         hx-trigger="click"
                         hx-target={ fmt.Sprintf("#user-%d", u.Id) }
@@ -124,7 +124,7 @@ templ (u User) RenderChip_PostView(other User) {
                         @SvgIcon("dazzle", "user-minus")
                     </button>
                 } else {
-                    <button hx-patch={ fmt.Sprintf("/htmx/admin-account/%d", u.Id) }
+                    <button hx-patch={ fmt.Sprintf("/htmx/user/%d", u.Id) }
                         hx-swap="outerHTML"
                         hx-trigger="click"
                         hx-target={ fmt.Sprintf("#user-%d", u.Id) }
@@ -136,7 +136,7 @@ templ (u User) RenderChip_PostView(other User) {
                     </button>
                 }
                 if !u.IsReset() {
-                    <button hx-delete={ fmt.Sprintf("/htmx/admin-account/%d", u.Id) }
+                    <button hx-delete={ fmt.Sprintf("/htmx/user/%d", u.Id) }
                         hx-swap="outerHTML"
                         hx-trigger="click"
                         hx-target={ fmt.Sprintf("#user-%d", u.Id) }

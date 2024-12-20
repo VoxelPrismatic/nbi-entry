@@ -47,6 +47,13 @@ func StageRouter(w http.ResponseWriter, r *http.Request, user common.User, path 
 	}
 
 	if len(path) != 1 {
+		for len(path) > 1 && path[len(path)-1] == "" {
+			path = path[:len(path)-1]
+		}
+		if len(path) == 1 {
+			http.Redirect(w, r, "/admin/stage/"+path[0], http.StatusTemporaryRedirect)
+			return
+		}
 		w.Header().Set("X-Redirect-Reason", "Bad request: /admin/stage/:ID")
 		http.Redirect(w, r, "/admin/stage", http.StatusTemporaryRedirect)
 		return

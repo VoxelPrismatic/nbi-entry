@@ -3,35 +3,14 @@ package variable
 import (
     "fmt"
     "nbientry/web/common"
+    "nbientry/css"
 )
-
-templ (v *VariableEntry) RenderVariable() {
-    switch v.GetVariable().Type {
-        case "number":
-            @v.RenderNumber()
-
-    }
-}
-
-templ (v *VariableEntry) RenderNumber() {
-    <div flex="col" class="variable">
-        <div title={ v.GetVariable().Description }>
-            <label for={ fmt.Sprintf("%d-input", v.VariableId) }>
-                <h1 class="name">{ v.GetVariable().Name }</h1>
-            </label>
-        </div>
-        <div class="value">
-            <input type="number" value={ v.Value } id={ fmt.Sprintf("%d-input", v.VariableId) }/>
-        </div>
-    </div>
-
-}
 
 templ edit_var_head(v VarEntry) {
     <div flex="row">
         <div class="token">{ fmt.Sprint(v.GetVarId()) }</div>
 
-        <button hx-get={ fmt.Sprintf("/htmx/variable/%d", v.GetVarId()) }
+        <button hx-get={ fmt.Sprintf("/htmx/var/%d", v.GetVarId()) }
             hx-target={ fmt.Sprintf("#variable-%d", v.GetVarId()) }
             hx-swap="outerHTML"
             hx-trigger="click"
@@ -41,7 +20,7 @@ templ edit_var_head(v VarEntry) {
             @common.SvgIcon("dazzle", "trash-undo")
         </button>
 
-        <button hx-delete={ fmt.Sprintf("/htmx/variable/%d", v.GetVarId()) }
+        <button hx-delete={ fmt.Sprintf("/htmx/var/%d", v.GetVarId()) }
             hx-target={ fmt.Sprintf("#variable-%d", v.GetVarId()) }
             hx-swap="outerHTML"
             hx-trigger="click"
@@ -58,3 +37,110 @@ templ edit_var_head(v VarEntry) {
     </div>
 }
 
+func (v Variable) RenderInViewer() templ.Component {
+    return v.New().RenderInViewer()
+}
+
+func (v Variable) RenderInEditor() templ.Component {
+    return v.New().RenderInEditor()
+}
+
+
+templ TypeSelector(v VarEntry, m map[string]string, optgroup string) {
+    if m != nil {
+        if optgroup != "" {
+            <optgroup label={ optgroup }>
+                for k, v := range m {
+                    <option value={ k }>{ v }</option>
+                }
+            </optgroup>
+        } else {
+            <div w-100 class={ css.Gap(8) }>
+                {{ t := v.Type() }}
+                <label for={ fmt.Sprintf("%d-type", t.Id) }>Type</label>
+                <select name="type" id={ fmt.Sprintf("%d-type", t.Id) } value="text-plain" border>
+                    <option value={ t.Type } selected>{ m[t.Type] }</option>
+                    for k, v := range m {
+                        if k != t.Type {
+                            <option value={ k }>{ v }</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+    }
+}
+
+templ RenderGenericVar_View(v VarEntry) {
+    {{ t := v.Type() }}
+    <div flex="col" border id={ fmt.Sprintf("variable-%d", t.Id) } class={ "post", css.Pad(8) }>
+        <div flex="row">
+            <h2 plus-input>{ t.Name }</h2>
+            @common.Action("Edit Variable", "pencil", templ.Attributes{
+                "hx-patch": fmt.Sprintf("/htmx/var/%d", t.Id),
+                "hx-target": fmt.Sprintf("#variable-%d", t.Id),
+            })
+        </div>
+        <div flex w-100>
+            if t.Description == "" {
+                <i>No description</i>
+            } else {
+                @common.Markdown(t.Description)
+            }
+        </div>
+        <table>
+            <tr>
+                <td>Type</td>
+                <td><code>{ t.Type }</code></td>
+            </tr>
+            <tr>
+                <td>Suffix</td>
+                <td><code>{ t.Suffix }</code></td>
+            </tr>
+        </table>
+    </div>
+    <script>masonry()</script>
+}
+
+templ RenderGenericVar_Edit(v VarEntry, types map[string]string) {
+    {{ t := v.Type() }}
+    <div w-100 border id={ fmt.Sprintf("variable-%d", t.Id) } layer="base" class={ "post", css.Pad(8), css.Gap(8) }>
+        <form flex="col" hx-post={ fmt.Sprintf("/htmx/var/%d", t.Id) }
+            hx-target={ fmt.Sprintf("#variable-%d", t.Id) }
+            hx-swap="outerHTML"
+            hx-trigger="submit"
+        >
+            <div flex="row" class={ css.Gap(8) }>
+                <h2 plus-input>
+                    <input type="text" name="name" value={ t.Name } placeholder="Variable Name" border/>
+                </h2>
+            </div>
+            <div flex="row" class={ css.Gap(8) }>
+                <input type="text" name="suffix" value={ t.Suffix } placeholder="Suffix" border/>
+                @common.Action("Discard Changes", "trash-undo", templ.Attributes{
+                    "hx-get": fmt.Sprintf("/htmx/var/%d", t.Id),
+                    "hx-target": fmt.Sprintf("#variable-%d", t.Id),
+                })
+                @common.Action("Delete Variable", "trash", templ.Attributes{
+                    "hx-delete": fmt.Sprintf("/htmx/var/%d", t.Id),
+                    "hx-target": fmt.Sprintf("#variable-%d", t.Id),
+                    "hx-confirm": "Are you sure you want to delete this variable?",
+                })
+                @common.Action("Save Variable", "floppy-disk", templ.Attributes{
+                    "type": "submit",
+                })
+            </div>
+            <div flex w-100>
+                <textarea name="description"
+                    placeholder="Variable Description; Supports Markdown"
+                    rows="2"
+                    class={ css.Gap(8) }
+                    border
+                >
+                    { t.Description }
+                </textarea>
+            </div>
+            @TypeSelector(v, types, "")
+        </form>
+    </div>
+}

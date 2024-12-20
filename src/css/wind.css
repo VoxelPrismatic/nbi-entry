@@ -1,14 +1,14 @@
-.m-nil {
+[m~="nil"] {
     margin: 0;
 }
 
-.a-center {
+[m~="center"] {
     align-self: center;
     height: min-content;
 }
 
 .link-color {
-    color: var(--sakura-layer-inv);
+    color: var(--sakura-text-norm);
     text-decoration: none;
 }
 
@@ -18,13 +18,19 @@
 
 [flex] {
     display: flex;
-    &[flex="col"], &[flex="column"] {
+    &[flex~="col"], &[flex~="column"] {
         gap: var(--pad);
         flex-direction: column;
     }
-    &[flex="row"] {
+    &[flex~="row"] {
         gap: var(--pad);
         flex-direction: row;
+    }
+    &[flex~="wrap"] {
+        flex-wrap: wrap;
+    }
+    &[flex~="nowrap"] {
+        flex-wrap: nowrap;
     }
 }
 
@@ -58,7 +64,7 @@
 
 *:hover {
     & > a.link-color {
-        color: var(--sakura-text-norm);
+        color: var(--sakura-layer-inv);
     }
 
     & > .svg-icon {

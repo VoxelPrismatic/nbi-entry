@@ -67,16 +67,6 @@ div.user-chip {
     }
 }
 
-div#stage-notifs {
-    & div.name {
-        height: min-content;
-        align-self: center;
-    }
-    & h1 {
-        margin: 0;
-    }
-}
-
 div.application-segment {
     padding: 0;
     overflow: clip;
@@ -99,16 +89,6 @@ div.application-segment {
     & div.scroll {
         padding: var(--gap);
         padding-top: 0;
-        flex-wrap: wrap;
-        & select {
-            border-radius: var(--gap);
-        }
-
-        &.color {
-            & h3 {
-                margin: 0;
-            }
-        }
     }
 
     & a.user-chip {

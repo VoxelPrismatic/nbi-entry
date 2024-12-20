@@ -1,13 +1,121 @@
 package variable
 
-import "fmt"
+import (
+    "fmt"
+    "nbientry/web/common"
+    "nbientry/css"
+)
 
 templ (v var_form) RenderInNbi() {
-    <div flex="col" class="variable" id={ fmt.Sprintf("variable-%d", v.VariableId) }>
-        <div flex="row">
-            for _, c := range v.children() {
+    <div flex="col" class="variable" id={ fmt.Sprintf("variable-%d", v.Type().Id) }>
+        <h2 m="nil">{ v.T.Name }</h2>
+        <div flex w-100>
+            if v.T.Description != "" {
+                @common.Markdown(v.T.Description)
+            }
+        </div>
+        {{ children, last := v.children() }}
+        <div class={ css.Masonry(8, 256) } border>
+            for _, c := range children {
                 @c.RenderInNbi()
             }
         </div>
+        for _, c := range last {
+            <div flex w-100 border>
+                @c.RenderInNbi()
+            </div>
+        }
+    </div>
+}
+
+templ (v var_form) RenderInEditor() {
+    <div flex="col"w-100 border id={ fmt.Sprintf("variable-%d", v.Type().Id) } layer="base">
+        <form hx-post={ fmt.Sprintf("/htmx/var/%d", v.T.Id) } class={ css.Pad(8) }
+            hx-target={ fmt.Sprintf("#variable-%d", v.T.Id) }
+            hx-trigger="submit"
+            hx-swap="outerHTML"
+            flex="col"
+        >
+            <div flex="row" class={ css.Gap(8) }>
+                <h2 plus-input>
+                    <input type="text" name="name" value={ v.T.Name } placeholder="Variable Name" border/>
+                </h2>
+                @common.Action("Discard Changes", "trash-undo", templ.Attributes{
+                    "hx-get": fmt.Sprintf("/htmx/var/%d", v.T.Id),
+                    "hx-target": fmt.Sprintf("#variable-%d", v.T.Id),
+                })
+                if v.T.ParentId != 0 {
+                    @common.Action("Delete Variable", "trash", templ.Attributes{
+                        "hx-delete": fmt.Sprintf("/htmx/var/%d", v.T.Id),
+                        "hx-target": fmt.Sprintf("#variable-%d", v.T.Id),
+                        "hx-confirm": "Are you sure you want to delete this variable?",
+                    })
+                }
+                @common.Action("Save Variable", "floppy-disk", templ.Attributes{
+                    "type": "submit",
+                })
+            </div>
+            <div flex w-100>
+                <textarea name="description"
+                    placeholder="Variable Description; Supports Markdown"
+                    rows="10"
+                    class={ css.Gap(8) }
+                    border
+                >
+                    { v.T.Description }
+                </textarea>
+            </div>
+        </form>
+    </div>
+}
+
+templ (v var_form) RenderInViewer() {
+    <div flex="col" w-100 id={ fmt.Sprintf("variable-%d", v.Type().Id) }>
+        <div flex="row">
+            <h2 plus-input>{ v.T.Name }</h2>
+            <select id={ fmt.Sprintf("variable-%d-selector", v.T.Id) }
+                hx-put={ fmt.Sprintf("/htmx/var/%d", v.T.Id) }
+                hx-trigger="change"
+                hx-swap="outerHTML"
+                hx-target={ fmt.Sprintf("#variable-%d", v.T.Id) }
+                value="0"
+                name="type"
+                border
+            >
+                <option value="0" selected disabled>Add New Variable</option>
+                <option value="num">Number</option>
+                @TypeSelector(&v, recursive_types, "Recursive")
+                @TypeSelector(&v, text_types, "Text")
+            </select>
+            @common.Action("Edit Variable", "pencil", templ.Attributes{
+                "hx-patch": fmt.Sprintf("/htmx/var/%d", v.T.Id),
+                "hx-target": fmt.Sprintf("#variable-%d", v.T.Id),
+            })
+        </div>
+        <div flex w-100>
+            if v.T.Description == "" {
+                <i>No description</i>
+            } else {
+                @common.Markdown(v.T.Description)
+            }
+        </div>
+        <div flex="col" w-100 border class={ css.Pad(8) }>
+            {{ children, last := v.children() }}
+            if len(children) + len(last) == 0 {
+                <i>No variables</i>
+            } else {
+                <div class={ css.Masonry(8, 368) } w-100 masonry="368">
+                    for _, c := range children {
+                        @c.RenderInViewer()
+                    }
+                </div>
+                for _, c := range last {
+                    <div flex w-100>
+                        @c.RenderInViewer()
+                    </div>
+                }
+            }
+        </div>
+        <script>for(var e of $$("select")) e.value = "0";setTimeout(masonry, 50)</script>
     </div>
 }

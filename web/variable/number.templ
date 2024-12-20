@@ -1,0 +1,30 @@
+package variable
+
+import (
+    "fmt"
+)
+
+templ (v var_num) RenderInNbi() {
+    <div flex="col" class="variable" id={ fmt.Sprintf("variable-%d", v.Type().Id) }>
+        <div flex="row">
+            <label for={ fmt.Sprintf("%d-input", v.T.Id) }>
+                <h3 class="name">{ v.T.Name }</h3>
+            </label>
+        </div>
+        <div flex="row" title={ v.T.Description }>
+            <input type="text" value={ fmt.Sprint(v.Value) } id={ fmt.Sprintf("%d-input", v.T.Id) }/>
+            if v.T.Suffix != "" {
+                <span class="suffix">{ v.T.Suffix }</span>
+            }
+        </div>
+    </div>
+}
+
+templ (v var_num) RenderInViewer() {
+    @RenderGenericVar_View(&v)
+}
+
+templ (v var_num) RenderInEditor() {
+    @RenderGenericVar_Edit(&v, nil)
+}
+

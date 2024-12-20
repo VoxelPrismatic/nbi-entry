@@ -35,14 +35,17 @@ func HtmxRouter_Authed(w http.ResponseWriter, r *http.Request, user common.User,
 	case "account":
 		htmx.AccountRouter(w, r, user, path[1:])
 
-	case "admin-account":
-		htmx.AdminAccountRouter(w, r, user, path[1:])
+	case "user":
+		htmx.UserRouter(w, r, user, path[1:])
 
-	case "admin-stage":
+	case "stage":
 		htmx.StageRouter(w, r, user, path[1:])
 
-	case "admin-notif":
+	case "notif":
 		htmx.NotifRouter(w, r, user, path[1:])
+
+	case "var":
+		htmx.VariableRouter(w, r, user, path[1:])
 
 	case "upload-img":
 		UploadImage(w, r, user, path[1:])

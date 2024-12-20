@@ -1,12 +1,14 @@
 function masonry(listing) {
     if(!listing)
-        return $$("div.masonry").forEach(masonry);
+        return $$("div.masonry, div[masonry]").forEach(masonry);
 
+    if(listing.getAttribute("masonry"))
+        listing.dataset.width = listing.getAttribute("masonry");
     if(!listing.dataset.width)
         listing.dataset.width = 376;
 
     const col_count = Math.max(1, Math.floor(listing.clientWidth / listing.dataset.width));
-    console.log("Column Count:", col_count);
+    console.log("Column Count:", col_count, listing);
     let index = 0;
     let columns = Array(col_count).fill(0).map(() => {
         return {
@@ -16,11 +18,11 @@ function masonry(listing) {
         }
     });
 
-    var index_no = listing.$$(".post[data-index]").length;
-    for(var post of listing.$$(".post:not([data-index])"))
+    var index_no = listing.$$("& > .post[data-index], & > .column > .post[data-index]").length;
+    for(var post of listing.$$("& > .post:not([data-index]), & > .column > .post:not([data-index])"))
         post.dataset.index = index_no++;
 
-    const posts = Array.from(listing.$$(".post")).sort((a, b) => a.dataset.index - b.dataset.index);
+    const posts = Array.from(listing.$$("& > .post, & > .column > .post")).sort((a, b) => a.dataset.index - b.dataset.index);
     for(var post of posts) {
         const min_height = Math.min(...columns.map((c) => c.height));
         const column = columns.find((c) => c.height === min_height);

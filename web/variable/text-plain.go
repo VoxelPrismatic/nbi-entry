@@ -3,34 +3,32 @@ package variable
 import "nbientry/web"
 
 type var_str_plain struct {
-	NbiId      int
-	VariableId int
-	Index      int
-	Variable   Variable
-	Value      string
+	Real  VariableEntry
+	T     Variable
+	Value string
 }
 
 func (v var_str_plain) GetNbiId() int {
-	return v.NbiId
+	return v.Real.NbiId
 }
 
 func (v var_str_plain) GetVarId() int {
-	return v.VariableId
+	return v.Real.Id
 }
 
 func (v var_str_plain) GetIndex() int {
-	return v.Index
+	return v.Real.Index
 }
 
 func (v *var_str_plain) SetIndex(idx int) {
-	v.Index = idx
+	v.Real.Index = idx
 }
 
-func (v var_str_plain) GetVariable() Variable {
-	if v.Variable.VariableId == 0 {
-		v.Variable = web.GetFirst(Variable{VariableId: v.VariableId})
+func (v var_str_plain) Type() Variable {
+	if v.T.Id == 0 {
+		v.T = web.GetFirst(Variable{Id: v.Real.Id})
 	}
-	return v.Variable
+	return v.T
 }
 
 func (v *var_str_plain) Set(value string) error {
@@ -42,8 +40,12 @@ func (v var_str_plain) Get() string {
 	return v.Value
 }
 
+func (v *var_str_plain) Reset() {
+	v.Value = ""
+}
+
 func (v var_str_plain) ToSqlEntry() VariableEntry {
-	return VariableEntry{NbiId: v.NbiId, VariableId: v.VariableId, Value: v.Value}
+	return v.Real
 }
 
 func (v var_str_plain) ToTypedEntry() (VarEntry, error) {

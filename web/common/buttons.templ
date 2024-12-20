@@ -53,17 +53,19 @@ type EditBtn struct {
 }
 
 templ Action(title, icon string, attrs templ.Attributes) {
+    {{ t, ok := attrs["type"] }}
     <button { attrs... }
         title={ title }
         class={ "action", action_btn_icon_to_cls(icon) }
-        if _, ok := attrs["hx-trigger"]; !ok {
-            hx-trigger="click"
-        }
         if _, ok := attrs["hx-swap"]; !ok {
             hx-swap="outerHTML"
         }
-        if _, ok := attrs["type"]; !ok {
+        if !ok {
             type="button"
+        } else if t != "submit" {
+            if _, ok := attrs["hx-trigger"]; !ok {
+                hx-trigger="click"
+            }
         }
     >
         @SvgIcon("dazzle", icon)
