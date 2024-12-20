@@ -3,8 +3,8 @@ package variable
 import "fmt"
 
 templ (v var_form) RenderInNbi() {
-    <div class="variable flex-col" id={ fmt.Sprintf("variable-%d", v.VariableId) }>
-        <div class="flex-row">
+    <div flex="col" class="variable" id={ fmt.Sprintf("variable-%d", v.VariableId) }>
+        <div flex="row">
             for _, c := range v.children() {
                 @c.RenderInNbi()
             }

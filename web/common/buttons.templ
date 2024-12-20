@@ -51,3 +51,48 @@ type EditBtn struct {
     Class string
     Color string
 }
+
+templ Action(title, icon string, attrs templ.Attributes) {
+    <button { attrs... }
+        title={ title }
+        class={ "action", action_btn_icon_to_cls(icon) }
+        if _, ok := attrs["hx-trigger"]; !ok {
+            hx-trigger="click"
+        }
+        if _, ok := attrs["hx-swap"]; !ok {
+            hx-swap="outerHTML"
+        }
+        if _, ok := attrs["type"]; !ok {
+            type="button"
+        }
+    >
+        @SvgIcon("dazzle", icon)
+    </button>
+}
+
+func action_btn_icon_to_cls(icon string) string {
+    switch icon {
+    case "plus":
+        return "pine"
+
+    case "trash-undo":
+        return "gold"
+
+    case "floppy-disk":
+        return "tree"
+
+    case "pencil":
+        return "iris"
+
+    case "trash":
+        return "love"
+
+    case "caret-down":
+        fallthrough
+    case "caret-up":
+        return "gold"
+
+    default:
+        return "nil-icon-" + icon
+    }
+}

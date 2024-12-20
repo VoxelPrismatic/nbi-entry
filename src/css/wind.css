@@ -1,0 +1,129 @@
+.m-nil {
+    margin: 0;
+}
+
+.a-center {
+    align-self: center;
+    height: min-content;
+}
+
+.link-color {
+    color: var(--sakura-layer-inv);
+    text-decoration: none;
+}
+
+[w-100] {
+    width: 100%;
+}
+
+[flex] {
+    display: flex;
+    &[flex="col"], &[flex="column"] {
+        gap: var(--pad);
+        flex-direction: column;
+    }
+    &[flex="row"] {
+        gap: var(--pad);
+        flex-direction: row;
+    }
+}
+
+.svg-icon {
+    --bg: var(--sakura-layer-inv);
+    --stroke: var(--sakura-layer-base);
+    --size: 64px;
+    --frac: 8;
+
+    width: var(--size);
+    padding: calc(var(--size) / var(--frac));
+    border-radius: calc(var(--size) / var(--frac));
+    background-color: var(--bg);
+
+    & svg {
+        width: 100%;
+        height: min-content;
+        & path {
+            stroke: var(--stroke);
+        }
+    }
+
+    &.tree { --bg: var(--sakura-paint-tree); }
+    &.pine { --bg: var(--sakura-paint-pine); }
+    &.iris { --bg: var(--sakura-paint-iris); }
+    &.gold { --bg: var(--sakura-paint-gold); }
+    &.foam { --bg: var(--sakura-paint-foam); }
+    &.rose { --bg: var(--sakura-paint-rose); }
+    &.love { --bg: var(--sakura-paint-love); }
+}
+
+*:hover {
+    & > a.link-color {
+        color: var(--sakura-text-norm);
+    }
+
+    & > .svg-icon {
+        background-color: var(--stroke);
+        & path {
+            stroke: var(--bg);
+        }
+    }
+}
+
+
+
+[plus-input] {
+    display: flex;
+    margin: 0;
+    align-self: center;
+    height: min-content;
+    width: 100%;
+}
+h1[plus-input] input {
+    font-size: x-large;
+    font-weight: bold;
+} h2[plus-input] input {
+    font-size: large;
+    font-weight: bold;
+} h3[plus-input] input {
+    font-size: medium;
+    font-weight: bold;
+} h4[plus-input] input {
+    font-size: small;
+    font-style: italic;
+} h5[plus-input] input {
+    font-size: x-small;
+    font-style: italic;
+} h6[plus-input] input {
+    font-size: xx-small;
+    font-style: italic;
+}
+
+[layer] {
+    background-color: var(--layer);
+
+    &[layer="base"] {
+        --layer: var(--sakura-layer-base);
+    }
+
+    &[layer="overlay"] {
+        --layer: var(--sakura-layer-overlay);
+    }
+
+    &[layer="surface"] {
+        --layer: var(--sakura-layer-surface);
+    }
+
+    &[hover]:hover {
+        &[hover="base"] {
+            --layer: var(--sakura-layer-base);
+        }
+
+        &[hover="overlay"] {
+            --layer: var(--sakura-layer-overlay);
+        }
+
+        &[hover="surface"] {
+            --layer: var(--sakura-layer-surface);
+        }
+    }
+}

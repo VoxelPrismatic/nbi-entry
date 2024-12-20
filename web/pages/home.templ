@@ -2,47 +2,33 @@ package pages
 
 import (
     "nbientry/web/common"
+    "nbientry/css"
 )
 
 templ Home(user common.User) {
     @common.Head("NBI Entry", "NBI Entry")
     <body>
-        <div class="home masonry">
-            <div class="chip post">
-                <a href="/nbi/new">
-                    <div class="img svg tree">
-                        @common.SvgIcon("dazzle", "file-plus")
-                    </div>
-                    <h1>New NBI</h1>
-                </a>
-            </div>
-            <div class="chip post">
-                <a href="/nbi/view">
-                    <div class="img svg iris">
-                        @common.SvgIcon("dazzle", "list")
-                    </div>
-                    <h1>View NBIs</h1>
-                </a>
-            </div>
+        <div class={ css.Masonry(css.GAP, 368) }>
+            @HomeChip("/nbi/new", "tree", "file-plus", "New NBI")
+            @HomeChip("/nbi/view", "pine", "list", "View NBIs")
             if user.Admin {
-                <div class="chip post">
-                    <a href="/admin/stage">
-                        <div class="img svg rose">
-                            @common.SvgIcon("dazzle", "code-commit")
-                        </div>
-                        <h1>Stages</h1>
-                    </a>
-                </div>
-                <div class="chip post">
-                    <a href="/admin/user">
-                        <div class="img svg foam">
-                            @common.SvgIcon("dazzle", "user-pen")
-                        </div>
-                        <h1>Users</h1>
-                    </a>
-                </div>
+                @HomeChip("/admin/stage", "rose", "code-commit", "Stages")
+                @HomeChip("/admin/user", "foam", "user-pen", "Users")
             }
         </div>
         @common.Buttons(user, common.EditBtn{})
     </body>
+}
+
+templ HomeChip(href, color, icon, title string) {
+    <div class={ "post", css.Pad(16) } layer="surface" hover="overlay">
+        <a href={ templ.URL(href) } class={ css.FlexGap("row", 8), "link-color" }>
+            <div class={ "svg-icon", color, css.SvgIconSize(64, 8) }>
+                @common.SvgIcon("dazzle", icon)
+            </div>
+            <h1 class={ "m-nil", "a-center" }>
+                { title }
+            </h1>
+        </a>
+    </div>
 }

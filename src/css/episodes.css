@@ -87,24 +87,3 @@ table {
         width: calc(100% - 4px - var(--gap) * 2);
     }
 }
-
-div.stage {
-    & h1 {
-        margin: 0;
-    }
-
-    & a {
-        color: var(--sakura-paint-iris);
-        text-decoration: none;
-        width: 100%;
-    }
-
-    &:hover a {
-        color: var(--sakura-paint-pine);
-        text-decoration: underline;
-    }
-
-    background-color: var(--sakura-layer-surface);
-    padding: var(--gap);
-    border-radius: var(--gap);
-}

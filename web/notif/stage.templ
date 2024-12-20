@@ -4,39 +4,26 @@ import (
     "fmt"
     "strings"
     "nbientry/web/common"
+    "nbientry/css"
 )
 
 templ (s Stage) RenderRow() {
-    <div class="stage flex-row" id={ fmt.Sprintf("stage-%d", s.Id) }>
-        <button hx-put={ fmt.Sprintf("/htmx/admin-stage/%d/dec", s.Id) }
-            hx-target="#stage-table"
-            hx-trigger="click"
-            hx-swap="outerHTML"
-            class="action undo"
-            title="Move Up"
-        >
-            @common.SvgIcon("dazzle", "caret-up")
-        </button>
-        <button hx-put={ fmt.Sprintf("/htmx/admin-stage/%d/inc", s.Id) }
-            hx-target="#stage-table"
-            hx-trigger="click"
-            hx-swap="outerHTML"
-            class="action undo"
-            title="Move Down"
-        >
-            @common.SvgIcon("dazzle", "caret-down")
-        </button>
-        <button hx-put={ fmt.Sprintf("/htmx/admin-stage/%d/new", s.Id) }
-            hx-target="#stage-table"
-            hx-trigger="click"
-            hx-swap="outerHTML"
-            class="action new"
-            title="Make new stage"
-        >
-            @common.SvgIcon("dazzle", "plus")
-        </button>
-        <a href={ templ.URL(fmt.Sprintf("/admin/stage/%d", s.Id)) }>
-            <h1 class="name">{ s.Name }</h1>
+    <div flex="row" class={ css.Pad(8) } id={ fmt.Sprintf("stage-%d", s.Id) }
+        layer="surface" hover="overlay">
+        @common.Action("Move Up", "caret-up", templ.Attributes{
+            "hx-put": fmt.Sprintf("/htmx/admin-stage/%d/dec", s.Id),
+            "hx-target": "#stage-table",
+        })
+        @common.Action("Move Down", "caret-down", templ.Attributes{
+            "hx-put": fmt.Sprintf("/htmx/admin-stage/%d/inc", s.Id),
+            "hx-target": "#stage-table",
+        })
+        @common.Action("New Stage", "plus", templ.Attributes{
+            "hx-put": fmt.Sprintf("/htmx/admin-stage/%d/new", s.Id),
+            "hx-target": "#stage-table",
+        })
+        <a href={ templ.URL(fmt.Sprintf("/admin/stage/%d", s.Id)) } class={ "link-color" } w-100>
+            <h1 class="m-nil">{ s.Name }</h1>
         </a>
     </div>
 }
@@ -50,7 +37,7 @@ templ RenderStageTablePage(user common.User) {
 }
 
 templ RenderStageTable() {
-    <div class="flex-col" id="stage-table">
+    <div flex="col" id="stage-table">
         for _, s := range AllStages() {
             @s.RenderRow()
         }
@@ -60,7 +47,7 @@ templ RenderStageTable() {
 templ (s Stage) RenderPage(user common.User) {
     @common.Head(s.Name, "Stage Details")
     <body>
-        <div class="flex-col">
+        <div flex="col">
             @s.RenderHead_View()
             @s.RenderNotifs()
         </div>
@@ -69,18 +56,13 @@ templ (s Stage) RenderPage(user common.User) {
 }
 
 templ (s Stage) RenderHead_View() {
-    <div class="flex-col" id="stage-head">
-        <div class="flex-row">
-            <h1>{ s.Name }</h1>
-            <button hx-patch={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
-                hx-target="#stage-head"
-                hx-trigger="click"
-                hx-swap="outerHTML"
-                class="action edit"
-                title="Edit Stage"
-            >
-                @common.SvgIcon("dazzle", "pencil")
-            </button>
+    <div flex="col" class={ css.Pad(16) } id="stage-head" layer="surface">
+        <div flex="row">
+            <h1 plus-input>{ s.Name }</h1>
+            @common.Action("Edit Stage", "pencil", templ.Attributes{
+                "hx-patch": fmt.Sprintf("/htmx/admin-stage/%d", s.Id),
+                "hx-target": "#stage-head",
+            })
         </div>
         <div>
             if s.Description == "" {
@@ -93,48 +75,43 @@ templ (s Stage) RenderHead_View() {
 }
 
 templ (s Stage) RenderHead_Edit() {
-    <div class="flex-col" id="stage-head">
-        <form hx-post={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }>
-            <div class="flex-row">
-                <h1>
-                    <input type="text" name="name" value={ s.Name } placeholder="Stage Name"/>
+    <div flex="col" class={ css.Pad(16) } id="stage-head" layer="surface">
+        <form flex="col" hx-post={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }>
+            <div class={ css.FlexGap("row", 8) }>
+                <h1 plus-input>
+                    <input type="text" name="name" value={ s.Name } placeholder="Stage Name" border/>
                 </h1>
-                <button hx-get={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
-                    hx-target="#stage-head"
-                    hx-trigger="click"
-                    hx-swap="outerHTML"
-                    class="action undo"
-                    title="Discard Changes"
-                >
-                    @common.SvgIcon("dazzle", "trash-undo")
-                </button>
-                <button hx-delete={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
-                    hx-target="#stage-head"
-                    hx-trigger="click"
-                    hx-swap="outerHTML"
-                    class="action delete"
-                    title="Delete Stage"
-                    hx-confirm="Are you sure you want to delete this stage?"
-                >
-                    @common.SvgIcon("dazzle", "trash")
-                </button>
-                <button hx-post={ fmt.Sprintf("/htmx/admin-stage/%d", s.Id) }
-                    hx-target="#stage-head"
-                    hx-trigger="click"
-                    hx-swap="outerHTML"
-                    class="action save"
-                    title="Save Stage"
-                >
-                    @common.SvgIcon("dazzle", "floppy-disk")
-                </button>
+                @common.Action("Discard Changes", "trash-undo", templ.Attributes{
+                    "hx-get": fmt.Sprintf("/htmx/admin-stage/%d", s.Id),
+                    "hx-target": "#stage-head",
+                })
+                @common.Action("Delete Stage", "trash", templ.Attributes{
+                    "hx-delete": fmt.Sprintf("/htmx/admin-stage/%d", s.Id),
+                    "hx-target": "#stage-head",
+                    "hx-confirm": "Are you sure you want to delete this stage?",
+                })
+                @common.Action("Save Stage", "floppy-disk", templ.Attributes{
+                    "hx-post": fmt.Sprintf("/htmx/admin-stage/%d", s.Id),
+                    "hx-target": "#stage-head",
+                    "type": "submit",
+                })
             </div>
-            <textarea name="description" placeholder="Stage Description; Supports Markdown" rows="10">{ s.Description }</textarea>
+            <div flex w-100>
+                <textarea name="description"
+                    placeholder="Stage Description; Supports Markdown"
+                    rows="10"
+                    class={ css.Gap(8) }
+                    border
+                >
+                    { s.Description }
+                </textarea>
+            </div>
         </form>
     </div>
 }
 
 templ (s Stage) RenderNotifs() {
-    <div class="flex-col" id="stage-notifs">
+    <div id="stage-notifs" class={ css.Pad(16) } flex="col" layer="surface">
         <h1>Notifications</h1>
         for _, app := range AllApplicationSegments() {
             @s.RenderApplicationSegment_View(app)
@@ -148,54 +125,51 @@ templ (s Stage) RenderNotifAdd(app ApplicationSegment, user common.User) {
     if user.Id != 0 {
         @s.RenderNotifUser(app, user)
     }
-    <select hx-put={ fmt.Sprintf("/htmx/admin-notif/%d/%d", app.Id, s.Id) }
-        id={ fmt.Sprintf("app-%d-user-add", app.Id) }
-        hx-target={ fmt.Sprintf("#app-%d-user-add", app.Id) }
-        hx-swap="outerHTML"
-        hx-trigger="change"
-        name="user"
-    >
-        <option value="0" selected disabled>Add User</option>
-        for _, u := range (Notification{ AppSegId: app.Id, StageId: s.Id }).NegateUsers() {
-            <option value={ fmt.Sprintf("%d", u.Id) }>{ u.FullName }</option>
-        }
-    </select>
-    <script>for(var e of $$("select")) e.value = "0"</script>
 
 }
 
 templ (s Stage) RenderNotifUser(app ApplicationSegment, u common.User) {
     <div class="stage-chip" id={ fmt.Sprintf("app-%d-user-%d", app.Id, u.Id) }>
         @u.RenderChip()
-        <button hx-delete={ fmt.Sprintf("/htmx/admin-notif/%d/%d/%d", app.Id, s.Id, u.Id) }
-            hx-target={ fmt.Sprintf("#app-%d-user-%d", app.Id, u.Id) }
-            hx-trigger="click"
-            hx-swap="outerHTML"
-            hx-confirm="Are you sure you want to delete this notification?"
-            class="action delete glass"
-            title="Delete Notification"
-        >
-            @common.SvgIcon("dazzle", "trash")
-        </button>
+        @common.Action("Delete Notification", "trash", templ.Attributes{
+            "hx-delete": fmt.Sprintf("/htmx/admin-notif/%d/%d/%d", app.Id, s.Id, u.Id),
+            "hx-target": fmt.Sprintf("#app-%d-user-%d", app.Id, u.Id),
+            "hx-confirm": "Are you sure you want to delete this notification?",
+        })
     </div>
 }
 
 
 templ (s Stage) RenderApplicationSegment_View(app ApplicationSegment) {
-    <div class={ "application-segment", "flex-col", app.color() } id={ fmt.Sprintf("app-%d", app.Id) }>
-        <div class="app-name flex-row">
-            <h2>{ app.Name }</h2>
-            <button hx-patch={ fmt.Sprintf("/htmx/admin-notif/%d/%d", app.Id, s.Id) }
+    <div flex="col" class={ "application-segment", app.color() } id={ fmt.Sprintf("app-%d", app.Id) }>
+        <div flex="row" class={ "app-name" }>
+            <h2 plus-input>{ app.Name }</h2>
+            {{ users := (Notification{ AppSegId: app.Id, StageId: s.Id }).NegateUsers() }}
+            <select hx-put={ fmt.Sprintf("/htmx/admin-notif/%d/%d", app.Id, s.Id) }
+                id={ fmt.Sprintf("app-%d-user-add", app.Id) }
                 hx-target={ fmt.Sprintf("#app-%d", app.Id) }
-                hx-trigger="click"
                 hx-swap="outerHTML"
-                class="action edit"
-                title="Edit Application Segment"
+                hx-trigger="change"
+                name="user"
+                border
+                disabled?={ len(users) == 0 }
             >
-                @common.SvgIcon("dazzle", "pencil")
-            </button>
+                if len(users) > 0 {
+                    <option value="0" selected disabled>Add User</option>
+                    for _, u := range users {
+                        <option value={ fmt.Sprintf("%d", u.Id) } title={ u.Email }>{ u.FullName }</option>
+                    }
+                } else {
+                    <option value="0" selected disabled>No more users</option>
+                }
+            </select>
+            <script>for(var e of $$("select")) e.value = "0"</script>
+            @common.Action("Edit Application Segment", "pencil", templ.Attributes{
+                "hx-patch": fmt.Sprintf("/htmx/admin-notif/%d/%d", app.Id, s.Id),
+                "hx-target": fmt.Sprintf("#app-%d", app.Id),
+            })
         </div>
-        <div class="scroll flex-row">
+        <div flex="row" class="scroll">
             for _, u := range GetNotifications(s, app) {
                 @s.RenderNotifUser(app, u)
             }
@@ -206,40 +180,28 @@ templ (s Stage) RenderApplicationSegment_View(app ApplicationSegment) {
 }
 
 templ (s Stage) RenderApplicationSegment_Edit(app ApplicationSegment) {
-    <div class={ "application-segment", "flex-col", app.color() } id={ fmt.Sprintf("app-%d", app.Id) }>
+    <div flex="col" class={ "application-segment", app.color() } id={ fmt.Sprintf("app-%d", app.Id) }>
         <form hx-post={ fmt.Sprintf("/htmx/admin-notif/%d/%d", app.Id, s.Id) }
             hx-trigger="submit"
             hx-swap="outerHTML"
             hx-target={ fmt.Sprintf("#app-%d", app.Id) }
         >
-            <div class="app-name flex-row">
-                <h2>
-                    <input type="text" name="name" value={ app.Name } placeholder="Application Segment Name"/>
+            <div flex="row" class="app-name">
+                <h2 plus-input>
+                    <input type="text" name="name" value={ app.Name } placeholder="Application Segment Name" border/>
                 </h2>
-                <button hx-get={ fmt.Sprintf("/htmx/admin-notif/%d/%d", app.Id, s.Id) }
-                    hx-target={ fmt.Sprintf("#app-%d", app.Id) }
-                    hx-trigger="click"
-                    hx-swap="outerHTML"
-                    class="action undo"
-                    type="button"
-                    title="Discard Changes"
-                >
-                    @common.SvgIcon("dazzle", "trash-undo")
-                </button>
-                <button hx-delete={ fmt.Sprintf("/htmx/admin-notif/%d", app.Id) }
-                    hx-target={ fmt.Sprintf("#app-%d", app.Id) }
-                    hx-trigger="click"
-                    hx-swap="outerHTML"
-                    class="action delete"
-                    type="button"
-                    title="Delete Application Segment"
-                    hx-confirm="Are you sure you want to delete this application segment?"
-                >
-                    @common.SvgIcon("dazzle", "trash")
-                </button>
-                <button type="submit" class="action save" title="Save Application Segment">
-                    @common.SvgIcon("dazzle", "floppy-disk")
-                </button>
+                @common.Action("Discard Changes", "trash-undo", templ.Attributes{
+                    "hx-get": fmt.Sprintf("/htmx/admin-notif/%d/%d", app.Id, s.Id),
+                    "hx-target": fmt.Sprintf("#app-%d", app.Id),
+                })
+                @common.Action("Delete Application Segment", "trash", templ.Attributes{
+                    "hx-delete": fmt.Sprintf("/htmx/admin-notif/%d", app.Id),
+                    "hx-target": fmt.Sprintf("#app-%d", app.Id),
+                    "hx-confirm": "Are you sure you want to delete this application segment?",
+                })
+                @common.Action("Save Application Segment", "floppy-disk", templ.Attributes{
+                    "type": "submit",
+                })
             </div>
             <div class="scroll color">
                 <h3>Color:</h3>
@@ -270,16 +232,11 @@ templ (s Stage) RenderApplicationSegment_Template(app ApplicationSegment) {
     if app.Id != 0 {
         @s.RenderApplicationSegment_Edit(app)
     }
-    <div class="application-segment flex-row" id="app-new">
-        <button hx-put={ fmt.Sprintf("/htmx/admin-notif/%d", s.Id) }
-            hx-target="#app-new"
-            hx-trigger="click"
-            hx-swap="outerHTML"
-            class="action new"
-            title="New Application Segment"
-        >
-            @common.SvgIcon("dazzle", "plus")
-        </button>
+    <div flex="row" class="application-segment" id="app-new">
+        @common.Action("New Application Segment", "plus", templ.Attributes{
+            "hx-put": fmt.Sprintf("/htmx/admin-notif/%d", s.Id),
+            "hx-target": "#app-new",
+        })
         <div class="app-name">New Application Segment</div>
     </div>
 }

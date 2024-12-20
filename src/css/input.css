@@ -74,3 +74,36 @@ input[name="color"] {
     &[value="love"] { accent-color: var(--sakura-paint-love); }
 }
 
+[border] {
+    border-radius: var(--pad);
+    box-sizing: border-box;
+    border: 2px solid var(--sakura-hl-high);
+    color: var(--sakura-text-norm);
+    background-color: var(--layer);
+}
+
+
+input[border] {
+    width: 100%;
+    height: var(--btn-size);;
+    align-self: center;
+    padding: 0 var(--pad);
+}
+
+textarea[border] {
+    width: 100%;
+    padding: var(--pad);
+    resize: vertical;
+    transition-property: color, background-color, border-color, border-radius;
+}
+
+select[border] {
+    height: var(--btn-size);
+    padding: 0 var(--pad);
+    align-self: center;
+}
+
+select[disabled] {
+    opacity: 50%;
+    cursor: not-allowed;
+}

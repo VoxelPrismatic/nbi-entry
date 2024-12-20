@@ -122,7 +122,7 @@ func Notif_PUT(w http.ResponseWriter, r *http.Request, user common.User, path []
 		n := notif.Notification{AppSegId: app_seg.Id, StageId: stage.Id, UserId: u.Id}
 		web.Save(&n)
 
-		fail.Render(w, r, stage.RenderNotifAdd(app_seg, u))
+		fail.Render(w, r, stage.RenderApplicationSegment_View(app_seg))
 		return
 	}
 

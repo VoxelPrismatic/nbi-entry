@@ -6,13 +6,13 @@ import (
 )
 
 templ (v var_str_autofill) RenderInNbi() {
-    <div class="variable flex-col" id={ fmt.Sprintf("variable-%d", v.VariableId) }>
-        <div class="flex-row">
+    <div flex="col" class="variable" id={ fmt.Sprintf("variable-%d", v.VariableId) }>
+        <div flex="row">
             <label for={ fmt.Sprintf("%d-input", v.VariableId) }>
                 <h3 class="name">{ v.GetVariable().Name }</h3>
             </label>
         </div>
-        <div class="flex-row" title={ v.GetVariable().Description }>
+        <div flex="row" title={ v.GetVariable().Description }>
             <input type="text"
                 name={ fmt.Sprintf("%d", v.VariableId) }
                 value={ v.Value }

@@ -1,6 +1,7 @@
 :root {
     --padding: 16px;
     --gap: 8px;
+    --pad: 8px;
 
     --round-layer-0: 16px;
     --round-layer-1: 12px;
@@ -10,6 +11,8 @@
     --cubic: cubic-bezier(0.5, 0, 0.25, 1);
 
     --column-width: 368px;
+
+    --btn-size: 36px;
 }
 
 * {
@@ -20,7 +23,7 @@
 body {
     background-color: var(--sakura-layer-base);
     color: var(--sakura-text-norm);
-    margin-bottom: 96px;
+    margin-bottom: calc(var(--btn-size) * 2);
 }
 
 div.flex-row {

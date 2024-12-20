@@ -1,0 +1,72 @@
+package css
+
+import (
+    "fmt"
+)
+
+const (
+    GAP = 8
+)
+
+
+func make_css(cls, content string) templ.CSSClass {
+    css := templruntime.GetBuilder()
+    css.WriteString(content)
+    str := css.String()
+    id := templ.CSSID(cls, str)
+    return templ.ComponentCSSClass{
+        ID: id,
+        Class: templ.SafeCSS(fmt.Sprintf(".%s{ %s }", id, str)),
+    }
+
+}
+
+css Pad(px int) {
+    padding: { fmt.Sprintf("%dpx", px) };
+    border-radius: { fmt.Sprintf("%dpx", px) };
+    --pad: { fmt.Sprintf("%dpx", px / 2) };
+}
+
+css Gap(px int) {
+    --pad: { fmt.Sprintf("%dpx", px) };
+    gap: { fmt.Sprintf("%dpx", px) };
+}
+
+func fix_flex_dir(dir string) string {
+    if dir == "row" {
+        return "row"
+    }
+    return "column"
+}
+
+css FlexGap(dir string, gap int) {
+    display: flex;
+    flex-direction: { fix_flex_dir(dir) };
+    gap: { fmt.Sprintf("%dpx", gap) };
+    --pad: { fmt.Sprintf("%dpx", gap) };
+}
+
+css SvgIcon(bg, stroke string, size, frac int) {
+    --bg: { fmt.Sprintf("var(--sakura-layer-%s)", bg) };
+    --stroke: { fmt.Sprintf("var(--sakura-layer-%s)", stroke) };
+    --size: { fmt.Sprintf("%dpx", size) };
+    --frac: { fmt.Sprintf("%d", frac) };
+}
+
+css SvgIconSize(size, frac int) {
+    --size: { fmt.Sprintf("%dpx", size) };
+    --frac: { fmt.Sprintf("%d", frac) };
+}
+
+func Masonry(gap, width int) templ.CSSClass {
+    return make_css("masonry", fmt.Sprintf(`
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(%dpx, 1fr));
+gap: %dpx;
+& .column {
+    display: flex;
+    flex-direction: column;
+    gap: %dpx;
+}
+`, width, gap, gap))
+}

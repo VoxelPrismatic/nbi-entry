@@ -89,11 +89,11 @@ templ (u User) RenderPassword_Edit(reason string) {
 
 templ (u User) RenderChip() {
     <a href={ templ.SafeURL(fmt.Sprintf("/user/view/%d", u.Id)) } class="user-chip">
-        <div class="flex-row">
+        <div flex="row">
             <div class="img">
                 <img src={ u.Image } title={ u.FullName }/>
             </div>
-            <div class="details flex-col">
+            <div flex="col" class="details">
                 <h3>{ u.FullName }</h3>
                 <h6>{ u.Email }</h6>
             </div>
@@ -102,12 +102,12 @@ templ (u User) RenderChip() {
 }
 
 templ (u User) RenderChip_PostView(other User) {
-    <div class="post flex-row user-chip" id={ fmt.Sprintf("user-%d", u.Id) }>
+    <div flex="row" class="post user-chip" id={ fmt.Sprintf("user-%d", u.Id) }>
         <div class="link">
             @u.RenderChip()
         </div>
         if other.Admin {
-            <div class="flex-col buttons">
+            <div flex="col" class="buttons">
                 if u.Id == other.Id {
                     <button class="action undo" title="You can't demote yourself" disabled>
                         @SvgIcon("dazzle", "user-minus")

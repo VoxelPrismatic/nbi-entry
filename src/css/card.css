@@ -9,61 +9,6 @@ div.masonry {
     }
 }
 
-div.chip {
-    background-color: var(--sakura-layer-overlay);
-    padding: var(--gap);
-    border-radius: var(--padding);
-    &:hover {
-        & a { color: var(--sakura-text-norm); }
-        background-color: var(--sakura-layer-surface);
-        & div.img.svg {
-            background-color: var(--stroke);
-            & path {
-                stroke: var(--bg);
-            }
-        }
-    }
-
-    & a {
-        display: flex;
-        flex-direction: row;
-        gap: var(--gap);
-        color: var(--sakura-layer-inv);
-        text-decoration: none;
-    }
-
-    & h1 {
-        margin: 0;
-        height: min-content;
-        align-self: center;
-    }
-
-    & div.img.svg {
-        --bg: var(--sakura-layer-inv);
-        --stroke: var(--sakura-layer-base);
-        width: 64px;
-        padding: var(--gap);
-        border-radius: var(--gap);
-        background-color: var(--bg);
-
-        &.tree { --bg: var(--sakura-paint-tree); }
-        &.pine { --bg: var(--sakura-paint-pine); }
-        &.iris { --bg: var(--sakura-paint-iris); }
-        &.gold { --bg: var(--sakura-paint-gold); }
-        &.foam { --bg: var(--sakura-paint-foam); }
-        &.rose { --bg: var(--sakura-paint-rose); }
-        &.love { --bg: var(--sakura-paint-love); }
-
-        & svg {
-            width: 100%;
-            height: min-content;
-            & path {
-                stroke: var(--stroke);
-            }
-        }
-    }
-}
-
 a.user-chip {
     background-color: var(--sakura-layer-surface);
     color: var(--sakura-text-norm);
@@ -122,41 +67,7 @@ div.user-chip {
     }
 }
 
-div#stage-head {
-    padding: var(--padding);
-    border-radius: var(--padding);
-    background-color: var(--sakura-layer-surface);
-    & h1 {
-        display: flex;
-        margin: 0;
-        width: 100%;
-        & input {
-            height: calc(100% - 2px);
-            width: calc(100% - var(--gap) * 2 - 4px);
-            border-radius: var(--gap);
-            padding: 0 var(--gap);
-            font-size: x-large;
-            font-weight: bold;
-        }
-    }
-
-    textarea {
-        margin-top: var(--gap);
-        width: calc(100% - var(--padding) * 2 - 4px);
-        border-radius: var(--gap);
-        resize: vertical;
-        padding: var(--padding);
-        border: 2px solid var(--sakura-hl-high);
-        background-color: var(--sakura-layer-surface);
-
-        transition-property: color, background-color, border-color, border-radius;
-    }
-}
-
 div#stage-notifs {
-    padding: var(--padding);
-    border-radius: var(--padding);
-    background-color: var(--sakura-layer-surface);
     & div.name {
         height: min-content;
         align-self: center;
@@ -175,22 +86,6 @@ div.application-segment {
         width: calc(100% - var(--gap) * 2);
         padding: var(--gap);
         background-color: color-mix(in oklch, var(--sakura-layer-surface) 60%, var(--color) 40%);
-        & h2 {
-            display: flex;
-            margin: 0;
-            width: 100%;
-            height: min-content;
-            align-self: center;
-            & input {
-                height: calc(100% - 2px);
-                width: calc(100% - var(--gap) * 2 - 4px);
-                border-radius: var(--gap);
-                padding: 0 var(--gap);
-                font-size: large;
-                font-weight: bold;
-                min-height: 36px;
-            }
-        }
     }
 
     &.rose { --color: var(--sakura-paint-rose); }

@@ -14,7 +14,7 @@ templ (v *VariableEntry) RenderVariable() {
 }
 
 templ (v *VariableEntry) RenderNumber() {
-    <div class="variable flex-col">
+    <div flex="col" class="variable">
         <div title={ v.GetVariable().Description }>
             <label for={ fmt.Sprintf("%d-input", v.VariableId) }>
                 <h1 class="name">{ v.GetVariable().Name }</h1>
@@ -28,7 +28,7 @@ templ (v *VariableEntry) RenderNumber() {
 }
 
 templ edit_var_head(v VarEntry) {
-    <div class="flex-row">
+    <div flex="row">
         <div class="token">{ fmt.Sprint(v.GetVarId()) }</div>
 
         <button hx-get={ fmt.Sprintf("/htmx/variable/%d", v.GetVarId()) }
